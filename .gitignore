@@ -14,7 +14,7 @@ venv/
 htmlcov/
 
 # Data artifacts (generated, not committed)
-data/
+/data/
 *.db
 *.sqlite
 *.sqlite3
