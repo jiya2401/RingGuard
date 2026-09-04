@@ -1,0 +1,1 @@
+"""Attack simulator + simulated real-time event streaming mode."""

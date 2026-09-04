@@ -1,0 +1,1 @@
+"""FastAPI application layer: app factory, routes, typed schemas."""

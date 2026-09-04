@@ -1,0 +1,1 @@
+"""RingGuard architecture & evaluation documentation."""
