@@ -1,7 +1,8 @@
 <div align="center">
-# 🛡️ RingGuard 
- 
-### AI Risk Manager for Coordinated Payment Abuse
+
+# 🛡️ RingGuard
+
+### AI Risk Manager for Coordinated Payment Abuse 
  
 **Razorpay Buildathon · Track 2** 
  
