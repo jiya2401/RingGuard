@@ -107,4 +107,5 @@ class TestDeterminism:
 
         eco_a = build_ecosystem(tiny_config(), seed=1)
         eco_b = build_ecosystem(tiny_config(), seed=2)
-        assert build_graph(eco_a).number_of_edges() != build_graph(eco_b).number_of_edges() or True  # at least smoke
+        sig = lambda G: (G.number_of_edges(), sorted((u, v, d["rel_type"]) for u, v, d in G.edges(data=True)))
+        assert sig(build_graph(eco_a)) != sig(build_graph(eco_b))
