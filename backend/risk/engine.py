@@ -5,19 +5,21 @@ layers, all computed from the actual graph:
 
     FINAL RISK ~  w_s*STRUCTURAL  +  w_t*TEMPORAL
                 +  w_b*BEHAVIORAL +  w_f*MONEY_FLOW
-                -  w_l*LEGITIMATE_SHARING
+                -  LEGITIMATE_DEDUCTION*LEGITIMATE_SHARING
 
 Every layer returns its score plus named signals (`{signal, value,
 interpretation}`) whose values are the real computed quantities — the
 "WHY FLAGGED" evidence (spec §24). The legitimate-sharing layer is the
-counter-evidence ("WHY NOT FRAUD", spec §25): stable addresses, old
-accounts and diverse shopping lower the final risk instead of being
-ignored. Risk is a deterministic pure function of `(ring, G, as_of)`.
+counter-evidence ("WHY NOT FRAUD", spec §25): shared addresses, old
+stable accounts, diverse shopping and relaxed timing lower the final
+risk instead of being ignored. Its aggregation lives in
+`backend/risk/legitimacy.py` and is shared with every renderer, so the
+narrative can never disagree with the numbers. Risk is a deterministic
+pure function of `(ring, G, as_of)`.
 """
 
 from __future__ import annotations
 
-from collections import Counter
 from statistics import fmean, pstdev
 from typing import Any
 
@@ -25,16 +27,21 @@ import networkx as nx
 import pandas as pd
 
 from backend.detection.rings import Ring
-from backend.features.graph_features import compute_user_features, _hhi
-from backend.graph.schema import (
-    USER_LIVES_AT_ADDRESS,
-    USER_PAID_MERCHANT,
-    USER_SENT_TO_USER,
+from backend.features.graph_features import compute_user_features
+from backend.graph.schema import USER_SENT_TO_USER
+from backend.risk.legitimacy import (
+    DAY_S,
+    collect_legitimate_evidence,
+    created_times as _created_times,
+    default_ref as _default_ref,
+    max_window_count as _max_window_count,
+    max_window_share as _max_window_share,
+    ring_merchant_hhi as _ring_merchant_hhi,
+    ring_txn_times as _ring_txn_times,
+    synchronization as _synchronization,
 )
 
-DAY_S = 86_400
 YOUNG_ACCOUNT_S = 7 * DAY_S          # accounts younger than this are "new"
-STABLE_ACCOUNT_DAYS = 60.0           # mean age beyond this counts as stable
 
 # Layer weights (documented in IMPLEMENTATION_PLAN.md §M6).
 WEIGHTS = {
@@ -57,74 +64,6 @@ RECOMMENDATION_TIERS: tuple[tuple[int, str], ...] = (
 
 def _signal(name: str, value: Any, interpretation: str) -> dict:
     return {"signal": name, "value": value, "interpretation": interpretation}
-
-
-def _max_window_share(times: list[int], window_s: int) -> float:
-    """Max fraction of `times` falling inside any sliding `window_s` window."""
-    n = len(times)
-    if n < 2:
-        return 0.0
-    best = 0
-    for i in range(n):
-        j = i
-        while j < n and times[j] - times[i] <= window_s:
-            j += 1
-        best = max(best, j - i)
-    return best / n
-
-
-def _ring_txn_times(G: nx.MultiDiGraph, users: set[str]) -> list[int]:
-    """Timestamps of every payment/transfer made by `users` (ring activity)."""
-    times: list[int] = []
-    for u in users:
-        if u not in G:
-            continue
-        for _v, _w, d in G.out_edges(u, data=True):
-            if d.get("rel_type") in (USER_PAID_MERCHANT, USER_SENT_TO_USER):
-                times.append(d.get("timestamp", 0))
-    return sorted(times)
-
-
-def _created_times(G: nx.MultiDiGraph, users: set[str]) -> list[int]:
-    return sorted(G.nodes[u].get("created_at", 0) for u in users if u in G)
-
-
-def _default_ref(G: nx.MultiDiGraph) -> int:
-    return max((d.get("timestamp", 0) for _, _, d in G.edges(data=True)), default=0)
-
-
-def _max_window_count(times: list[int], window_s: int) -> int:
-    """Max number of `times` inside any sliding `window_s` window."""
-    best = 0
-    n = len(times)
-    for i in range(n):
-        j = i
-        while j < n and times[j] - times[i] <= window_s:
-            j += 1
-        best = max(best, j - i)
-    return best
-
-
-def _synchronization(G: nx.MultiDiGraph, users: set[str], window_s: int = 3_600) -> float:
-    """Max share of ring users active within the same `window_s` window.
-
-    Counts *distinct users*, not transactions, so a ring whose members
-    each also shop independently is not drowned by background activity:
-    coordination shows up as many users acting inside one window.
-    """
-    events = sorted(
-        (d.get("timestamp", 0), u)
-        for u in users if u in G
-        for _v, _w, d in G.out_edges(u, data=True)
-        if d.get("rel_type") in (USER_PAID_MERCHANT, USER_SENT_TO_USER)
-    )
-    best = 0
-    for i, (t, _u) in enumerate(events):
-        j = i
-        while j < len(events) and events[j][0] - t <= window_s:
-            j += 1
-        best = max(best, len({u for _t, u in events[i:j]}))
-    return best / len(users) if users else 0.0
 
 
 def _temporal_layer(
@@ -170,17 +109,6 @@ def _temporal_layer(
         ),
     ]
     return score, signals, len(times)
-
-
-def _ring_merchant_hhi(G: nx.MultiDiGraph, users: set[str]) -> float:
-    merch: Counter = Counter()
-    for u in users:
-        if u not in G:
-            continue
-        for _v, w, d in G.out_edges(u, data=True):
-            if d.get("rel_type") == USER_PAID_MERCHANT:
-                merch[w] += 1
-    return _hhi(list(merch.values()))
 
 
 def _behavioral_layer(
@@ -237,53 +165,6 @@ def _flow_layer(G: nx.MultiDiGraph, users: set[str]) -> tuple[float, list[dict],
     return score, signals, n_edges
 
 
-def _legitimate_layer(
-    G: nx.MultiDiGraph,
-    users: set[str],
-    ref: int,
-    merchant_diversity: float,
-    n_txn: int,
-) -> tuple[float, list[dict]]:
-    """Counter-evidence: lawful reasons to share infrastructure (spec §7, §25)."""
-    addresses: dict[str, set[str]] = {}
-    for u in users:
-        if u not in G:
-            continue
-        for _v, w, d in G.out_edges(u, data=True):
-            if d.get("rel_type") == USER_LIVES_AT_ADDRESS:
-                addresses.setdefault(w, set()).add(u)
-    addr_cov = max((len(s) / len(users) for s in addresses.values()), default=0.0)
-    created = _created_times(G, users)
-    mean_age_days = fmean((ref - c) / DAY_S for c in created) if created else 0.0
-    stability = min(1.0, mean_age_days / STABLE_ACCOUNT_DAYS)
-    # Diverse shopping only counts as counter-evidence when there is enough
-    # shopping history to observe it (a ring with no payments has no
-    # demonstrated diversity).
-    evidence_w = min(1.0, n_txn / max(1, 2 * len(users)))
-    diversity = merchant_diversity * evidence_w
-    score = 0.40 * addr_cov + 0.35 * stability + 0.25 * diversity
-    signals = [
-        _signal(
-            "shared_address_coverage",
-            round(addr_cov, 3),
-            "largest fraction of the ring living at one address (household signal)",
-        ),
-        _signal(
-            "account_age_stability",
-            round(stability, 3),
-            f"mean account age {round(mean_age_days)} days "
-            f"(stable relationships share infrastructure legitimately)",
-        ),
-        _signal(
-            "merchant_diversity",
-            round(diversity, 3),
-            "1 - merchant HHI, weighted by shopping history: normal households "
-            "shop across many merchants",
-        ),
-    ]
-    return score, signals
-
-
 def _recommendation(risk_score: float) -> str:
     for threshold, action in RECOMMENDATION_TIERS:
         if risk_score >= threshold:
@@ -312,10 +193,8 @@ def score_ring(
     temporal_s, temporal_sig, n_txn = _temporal_layer(G, users, ref)
     behavioral_s, behavioral_sig = _behavioral_layer(G, users, feats)
     flow_s, flow_sig, _n_flow = _flow_layer(G, users)
-    merchant_hhi = _ring_merchant_hhi(G, users)
-    legit_s, legit_sig = _legitimate_layer(
-        G, users, ref, 1.0 - merchant_hhi, n_txn
-    )
+    legit = collect_legitimate_evidence(G, users, ref=ref)
+    legit_s = legit["score"]
 
     layers = {
         "structural": ring.structural_score,
@@ -335,7 +214,7 @@ def score_ring(
 
     ring.risk_score = round(100 * risk01)
     ring.risk_signals = temporal_sig + behavioral_sig + flow_sig
-    ring.legitimate_signals = legit_sig
+    ring.legitimate_signals = legit["factors"]
 
     # WHY FLAGGED: each layer's weighted contribution, largest first (§24).
     detail = {

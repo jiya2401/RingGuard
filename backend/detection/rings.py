@@ -55,6 +55,8 @@ class Ring:
     # Filled by the M6 risk engine (spec §11, §26).
     drivers: list[dict] = field(default_factory=list)
     recommended_action: str = ""
+    # Structured legitimate-sharing evidence (M7; backend/risk/legitimacy.py).
+    legitimacy: dict = field(default_factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -74,6 +76,7 @@ class Ring:
             "status": self.status,
             "drivers": self.drivers,
             "recommended_action": self.recommended_action,
+            "legitimacy": self.legitimacy,
         }
 
 
