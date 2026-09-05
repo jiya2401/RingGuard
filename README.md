@@ -9,7 +9,7 @@
 *"Risk isn't always visible in a transaction. Sometimes it's visible in the network around it."*
  
 [![Status](https://img.shields.io/badge/status-milestone--driven%20build-blue)]()
-[![Tests](https://img.shields.io/badge/tests-54%20passing-brightgreen)]()
+[![Tests](https://img.shields.io/badge/tests-68%20passing-brightgreen)]()
 [![Python](https://img.shields.io/badge/python-3.14-3776AB?logo=python&logoColor=white)]()
 [![FastAPI](https://img.shields.io/badge/FastAPI-backend-009688?logo=fastapi&logoColor=white)]()
 [![Data](https://img.shields.io/badge/data-100%25%20synthetic-orange)]()
@@ -58,11 +58,29 @@ full plan, audit findings, architecture, milestone gates, and evaluation protoco
 | # | Milestone | Status | Notes |
 |---|-----------|:---:|---|
 | M1 | Repository audit + scaffolding | ✅ | Plan, package skeleton, config, tests green |
-| M2 | Synthetic payment ecosystem | ✅ | Archetypes A–H, hard negatives, demo generator, **54 tests green** |
-| M3 | Graph construction + feature fusion | ⏳ | *Planned* |
-| M4 | Risk propagation + explanation engine | ⏳ | *Planned* |
-| M5 | Frontend (React + Cytoscape.js) | ⏳ | *Planned* |
-| M6 | End-to-end demo + evaluation report | ⏳ | *Planned* |
+| M2 | Synthetic payment ecosystem | ✅ | Archetypes A–H, hard negatives, demo generator (12k txns, 2s) |
+| M3 | Graph construction | ✅ | Heterogeneous builder + schema, causal as_of snapshots |
+| M4 | Graph features | ⏳ | *Next — degree/k-core/PageRank/shared counts, money-flow metrics* |
+| M5 | Ring discovery | ⏳ | *Planned* |
+| M6 | Risk engine | ⏳ | *Planned* |
+| M7 | Legitimate-sharing + hard negatives | ⏳ | *Planned* |
+| M8 | Temporal + emerging-risk engine | ⏳ | *Planned* |
+| M9 | Baseline + evaluation | ⏳ | *Planned* |
+| M10 | Generalization + adversarial | ⏳ | *Planned* |
+| M11 | Propagation + blast radius | ⏳ | *Planned* |
+| M12 | Counterfactual engine | ⏳ | *Planned* |
+| M13 | AI Risk Manager tools | ⏳ | *Planned* |
+| M14 | Grounded AI Risk Copilot | ⏳ | *Planned* |
+| M15 | FastAPI backend | ⏳ | *Planned* |
+| M16 | Dashboard | ⏳ | *Planned* |
+| M17 | Interactive graph + timeline | ⏳ | *Planned* |
+| M18 | Attack simulator + live events | ⏳ | *Planned* |
+| M19 | HITL + feedback loop | ⏳ | *Planned* |
+| M20 | UX polish | ⏳ | *Planned* |
+| M21 | End-to-end testing | ⏳ | *Planned* |
+| M22 | Judge-style critique | ⏳ | *Planned* |
+| M23 | README + architecture docs | ⏳ | *Planned* |
+| M24 | Final demo prep | ⏳ | *Planned* |
 
 
 ## Stack
