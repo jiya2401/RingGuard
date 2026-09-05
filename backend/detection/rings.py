@@ -4,11 +4,14 @@ Candidate rings are discovered from the *actual* heterogeneous graph via
 structural reasoning, not from planted labels:
 
 1. Project the graph onto the user layer (shared infra + money flow).
-2. Take connected components, then keep clusters large/dense enough that
-   genuine coordination survives while trivial ties do not.
-3. For each candidate, assemble explainable structural signals and a
-   transparent `structural_score` (the risk engine in M6+ adds temporal,
-   behavioral and legitimate-sharing layers).
+2. Partition it with Louvain modularity (deterministic `seed`): dense
+   coordination subgraphs separate from sparse background chains, so a
+   market-wide pool of lightly-shared devices does not merge every user
+   into one meaningless mega-component.
+3. Keep communities large enough that genuine coordination survives,
+   then assemble explainable structural signals and a transparent
+   `structural_score` (the risk engine in M6+ adds temporal, behavioral
+   and legitimate-sharing layers).
 
 Detection is *causal*: pass a graph truncated with `as_of` and this module
 only sees events up to that time (no future edges leak in).
@@ -141,37 +144,61 @@ def _structural_score(
     return round(min(1.0, score), 3)
 
 
-def _primary_pattern(devices: set, cards: set, flow_edges: int, ips: set) -> str:
-    """Classify a candidate ring by its dominant structural flavour."""
-    if flow_edges:
+def _primary_pattern(device_coverage: float, card_coverage: float, flow_coverage: float) -> str:
+    """Classify a candidate ring by its dominant structural flavour.
+
+    Coverage = fraction of ring users participating in a resource that is
+    shared by >=2 members. Coverage — not raw entity counts — decides the
+    flavour: a device farm where every member rides the farm device is
+    device-driven even if members also keep personal devices, and a farm
+    device shared by 8 users is *more* device-biased than a single shared IP.
+    """
+    if flow_coverage >= 0.5:
         return "money-flow ring (directed transfers)"
-    device_bias = bool(devices) and len(devices) <= max(1, len(ips))
-    card_bias = bool(cards) and len(cards) <= max(1, len(devices))
-    if device_bias and card_bias:
+    if device_coverage >= 0.5 and card_coverage >= 0.5:
         return "coordinated device + payment-instrument reuse"
-    if device_bias:
+    if device_coverage >= 0.5:
         return "device reuse cluster"
-    if card_bias:
+    if card_coverage >= 0.5:
         return "payment-instrument sharing cluster"
     return "shared-infrastructure cluster"
+
+
+def _simple_weighted(P: nx.MultiDiGraph) -> nx.Graph:
+    """Collapse the (multi-)projection into a simple graph, summing weights."""
+    S = nx.Graph()
+    S.add_nodes_from(P.nodes(data=True))
+    for u, v, d in P.edges(data=True):
+        w = d.get("weight", 1.0)
+        if S.has_edge(u, v):
+            S[u][v]["weight"] += w
+        else:
+            S.add_edge(u, v, weight=w)
+    return S
 
 
 def discover_rings(
     G: nx.MultiDiGraph,
     min_users: int = 3,
     min_density: float = 0.15,
+    resolution: float = 1.5,
+    seed: int = 0,
 ) -> list[Ring]:
     """Discover candidate rings from the graph snapshot `G`.
 
-    Candidates are connected components of the user-coordination projection
-    that are large enough and structurally significant.
+    Candidates are Louvain communities of the weighted user-coordination
+    projection that are large enough to be structurally significant.
+    The fixed `seed` keeps the partition deterministic.
     """
     P = project_users(G)
-    S = nx.Graph(P.to_undirected())  # collapsed simple graph (component logic)
+    S = _simple_weighted(P)
 
     rings: list[Ring] = []
     comp_index = 0
-    for comp in nx.connected_components(S):
+    communities = nx.community.louvain_communities(
+        S, weight="weight", resolution=resolution, seed=seed
+    )
+    for comp in sorted(communities, key=min):
         comp_set = set(comp)
         if len(comp_set) < min_users:
             continue
@@ -197,19 +224,32 @@ def discover_rings(
             for _v, w, d in G.out_edges(u, data=True):
                 if d.get("rel_type") == USER_USED_DEVICE:
                     device_users.setdefault(w, set()).add(u)
-        n_shared_devices = sum(1 for holders in device_users.values() if len(holders) >= 2)
+        shared_devices = {w for w, holders in device_users.items() if len(holders) >= 2}
+        n_shared_devices = len(shared_devices)
         # The set of cards genuinely shared among >=2 users.
         card_users: dict[str, set] = {}
         for u in comp_set:
             for _v, w, d in G.out_edges(u, data=True):
                 if d.get("rel_type") == "USER_OWNS_CARD":
                     card_users.setdefault(w, set()).add(u)
-        n_shared_cards = sum(1 for holders in card_users.values() if len(holders) >= 2)
+        shared_cards = {w for w, holders in card_users.items() if len(holders) >= 2}
+        n_shared_cards = len(shared_cards)
+
+        # Coverage: fraction of ring users on resources shared by >=2 members.
+        # This (not raw counts) drives pattern classification.
+        users_on_shared_dev = set().union(
+            *(h for h in device_users.values() if len(h) >= 2)
+        )
+        users_on_shared_card = set().union(
+            *(h for h in card_users.values() if len(h) >= 2)
+        )
+        dev_cov = len(users_on_shared_dev) / len(comp_set)
+        card_cov = len(users_on_shared_card) / len(comp_set)
+        flow_cov = min(1.0, flow_edges / len(comp_set))
 
         score = _structural_score(
-            len(comp_set), max(1, n_shared_devices) if devices else 0,
-            max(1, n_shared_cards) if cards else 0, n_edges, n_pairs, flow_edges,
-            len(merchants),
+            len(comp_set), n_shared_devices, n_shared_cards,
+            n_edges, n_pairs, flow_edges, len(merchants),
         )
 
         signals = [
@@ -230,7 +270,7 @@ def discover_rings(
                 structural_score=score,
                 size=len(comp_set),
                 entity_types=["USER"],
-                primary_pattern=_primary_pattern(devices, cards, flow_edges, ips),
+                primary_pattern=_primary_pattern(dev_cov, card_cov, flow_cov),
                 risk_signals=signals,
                 estimated_simulated_exposure=0.0,
                 affected_entities={k: sorted(v) for k, v in entities.items()},

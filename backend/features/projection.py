@@ -13,6 +13,8 @@ money-flow edges preserve direction (mule rings need direction).
 
 from __future__ import annotations
 
+import math
+
 import networkx as nx
 
 from backend.data.model import USER
@@ -31,6 +33,12 @@ SHARED_REL_TYPES = (
 # A resource touched by more users than this is treated as shared
 # infrastructure, not evidence of coordination (see cap rationale below).
 MAX_SHARED_FANOUT = 6
+
+# The fan-out cap scales with the population: a resource used by more than
+# FANOUT_POP_FRACTION of *all* users is population-level infrastructure.
+# A device shared by 8 of 12 users is background; a device shared by 8 of
+# 120 users is a textbook device farm and must remain a signal.
+FANOUT_POP_FRACTION = 0.25
 
 SHARE_WEIGHTS = {
     USER_USED_DEVICE: 2.0,
@@ -91,22 +99,25 @@ def project_users(G: nx.MultiDiGraph) -> nx.MultiDiGraph:
                 P.add_edge(v, u, key=key, weight=weight, reason=reason)
 
     # --- Shared infrastructure (strong relations) ---
-    # Fan-out cap: a device/card/bank-account touched by more than
-    # MAX_SHARED_FANOUT distinct users is treated as population-level
-    # infrastructure (a shared device pool, a common merchant-issued
-    # card program) rather than coordination evidence, and is excluded.
-    # Without this cap, background users sharing a small market-wide
-    # device/card pool transitively collapse into one giant connected
-    # component that swallows real rings and background alike (verified
-    # empirically: on tiny_config this produced a single 29-user
-    # component covering the ENTIRE population -- see docs/findings.md).
+    # Fan-out cap: a device/card/bank-account touched by *very many* distinct
+    # users is population-level infrastructure (a shared device pool, a
+    # common merchant-issued card program) rather than coordination
+    # evidence, and is excluded. Without any cap, background users sharing
+    # a small market-wide device/card pool transitively collapse into one
+    # giant component that swallows real rings and background alike.
+    # The cap therefore SCALES WITH THE POPULATION (MAX_SHARED_FANOUT floor
+    # + FANOUT_POP_FRACTION of all users): a device shared by 8 of 120 users
+    # is a textbook device farm and must stay linkable. With the original
+    # fixed cap of 6, planted demo rings of 8-9 users were severed from the
+    # projection entirely (see docs/findings.md).
+    max_fanout = max(MAX_SHARED_FANOUT, math.ceil(FANOUT_POP_FRACTION * len(users)))
     for rel_type in SHARED_REL_TYPES:
         value_to_users: dict[str, set[str]] = {}
         for u, w, d in G.edges(data=True):
             if d["rel_type"] == rel_type:
                 value_to_users.setdefault(w, set()).add(u)
         for holders in value_to_users.values():
-            if len(holders) < 2 or len(holders) > MAX_SHARED_FANOUT:
+            if len(holders) < 2 or len(holders) > max_fanout:
                 continue
             for u in holders:
                 for v in holders:
