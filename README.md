@@ -60,8 +60,8 @@ full plan, audit findings, architecture, milestone gates, and evaluation protoco
 | M1 | Repository audit + scaffolding | ✅ | Plan, package skeleton, config, tests green |
 | M2 | Synthetic payment ecosystem | ✅ | Archetypes A–H, hard negatives, demo generator (12k txns, 2s) |
 | M3 | Graph construction | ✅ | Heterogeneous builder + schema, causal as_of snapshots |
-| M4 | Graph features | ⏳ | *Next — degree/k-core/PageRank/shared counts, money-flow metrics* |
-| M5 | Ring discovery | ⏳ | *Planned* |
+| M4 | Graph features | ✅ | 21 semantics-validated features, coordination projection |
+| M5 | Ring discovery | ✅ | Fan-out-capped user projection + connected-component clustering + explainable structural score | 
 | M6 | Risk engine | ⏳ | *Planned* |
 | M7 | Legitimate-sharing + hard negatives | ⏳ | *Planned* |
 | M8 | Temporal + emerging-risk engine | ⏳ | *Planned* |

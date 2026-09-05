@@ -28,6 +28,10 @@ SHARED_REL_TYPES = (
     "USER_OWNS_BANK_ACCOUNT",    # strong: shared account
 )
 
+# A resource touched by more users than this is treated as shared
+# infrastructure, not evidence of coordination (see cap rationale below).
+MAX_SHARED_FANOUT = 6
+
 SHARE_WEIGHTS = {
     USER_USED_DEVICE: 2.0,
     "USER_OWNS_CARD": 2.0,
@@ -87,13 +91,22 @@ def project_users(G: nx.MultiDiGraph) -> nx.MultiDiGraph:
                 P.add_edge(v, u, key=key, weight=weight, reason=reason)
 
     # --- Shared infrastructure (strong relations) ---
+    # Fan-out cap: a device/card/bank-account touched by more than
+    # MAX_SHARED_FANOUT distinct users is treated as population-level
+    # infrastructure (a shared device pool, a common merchant-issued
+    # card program) rather than coordination evidence, and is excluded.
+    # Without this cap, background users sharing a small market-wide
+    # device/card pool transitively collapse into one giant connected
+    # component that swallows real rings and background alike (verified
+    # empirically: on tiny_config this produced a single 29-user
+    # component covering the ENTIRE population -- see docs/findings.md).
     for rel_type in SHARED_REL_TYPES:
         value_to_users: dict[str, set[str]] = {}
         for u, w, d in G.edges(data=True):
             if d["rel_type"] == rel_type:
                 value_to_users.setdefault(w, set()).add(u)
         for holders in value_to_users.values():
-            if len(holders) < 2:
+            if len(holders) < 2 or len(holders) > MAX_SHARED_FANOUT:
                 continue
             for u in holders:
                 for v in holders:
@@ -119,4 +132,4 @@ def project_users(G: nx.MultiDiGraph) -> nx.MultiDiGraph:
         if d["rel_type"] == USER_SENT_TO_USER:
             link(u, v, "flow", d.get("weight", 1.0), directed=True)
 
-    return P
+    return P 
