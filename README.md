@@ -62,7 +62,7 @@ full plan, audit findings, architecture, milestone gates, and evaluation protoco
 | M3 | Graph construction | ✅ | Heterogeneous builder + schema, causal as_of snapshots |
 | M4 | Graph features | ✅ | 21 semantics-validated features, coordination projection |
 | M5 | Ring discovery | ✅ | Population-scaled fan-out cap + Louvain community discovery + coverage-based patterns + explainable structural score | 
-| M6 | Risk engine | ⏳ | *Planned* |
+| M6 | Risk engine | ✅ | 4-layer engine (structural/temporal/behavioral/money-flow) − legitimate-sharing deduction, WHY-FLAGGED drivers, recommendation tiers, causal `as_of` scoring |
 | M7 | Legitimate-sharing + hard negatives | ⏳ | *Planned* |
 | M8 | Temporal + emerging-risk engine | ⏳ | *Planned* |
 | M9 | Baseline + evaluation | ⏳ | *Planned* |

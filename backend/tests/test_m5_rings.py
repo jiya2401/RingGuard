@@ -12,7 +12,8 @@ import pytest
 from backend.data.config import demo_config, tiny_config
 from backend.data.generator import build_ecosystem
 from backend.data.model import ARCHETYPES
-from backend.detection.rings import Ring, discover_rings
+from backend.detection.rings import Ring, _simple_weighted, discover_rings
+from backend.features.projection import project_users
 from backend.graph.builder import build_graph
 
 
@@ -21,6 +22,29 @@ def rings_tiny():
     eco = build_ecosystem(tiny_config(), seed=7)
     G = build_graph(eco)
     return eco, G, discover_rings(G)
+
+
+class TestReproducibility:
+    """Partition reproducibility across processes (spec §42).
+
+    Louvain follows adjacency insertion order, so the user projection
+    must be built in canonical (sorted) order — otherwise the partition
+    depends on the process string-hash seed. Regression test for a real
+    cross-process nondeterminism bug found during M6 calibration.
+    """
+
+    def test_projection_is_canonically_ordered(self):
+        eco = build_ecosystem(tiny_config(), seed=7)
+        G = build_graph(eco)
+        S = _simple_weighted(project_users(G))
+        nodes = list(S.nodes)
+        assert nodes == sorted(nodes), (
+            "projection nodes must be inserted in canonical order"
+        )
+        edge_keys = [(u, v) if u <= v else (v, u) for u, v in S.edges]
+        assert edge_keys == sorted(edge_keys), (
+            "projection edges must be inserted in canonical order"
+        )
 
 
 class TestRingContract:

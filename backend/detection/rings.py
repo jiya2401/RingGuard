@@ -52,6 +52,9 @@ class Ring:
     estimated_simulated_exposure: float = 0.0
     affected_entities: dict[str, list[str]] = field(default_factory=dict)
     status: str = "NEW"
+    # Filled by the M6 risk engine (spec §11, §26).
+    drivers: list[dict] = field(default_factory=list)
+    recommended_action: str = ""
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -69,6 +72,8 @@ class Ring:
             "estimated_simulated_exposure": self.estimated_simulated_exposure,
             "affected_entities": self.affected_entities,
             "status": self.status,
+            "drivers": self.drivers,
+            "recommended_action": self.recommended_action,
         }
 
 
@@ -165,15 +170,21 @@ def _primary_pattern(device_coverage: float, card_coverage: float, flow_coverage
 
 
 def _simple_weighted(P: nx.MultiDiGraph) -> nx.Graph:
-    """Collapse the (multi-)projection into a simple graph, summing weights."""
+    """Collapse the (multi-)projection into a simple graph, summing weights.
+
+    Nodes and edges are added in canonical (sorted) order: Louvain's
+    exploration follows adjacency insertion order, so without this the
+    partition would depend on the process string-hash seed (spec §42
+    reproducibility).
+    """
     S = nx.Graph()
-    S.add_nodes_from(P.nodes(data=True))
+    S.add_nodes_from(sorted(P.nodes(data=True), key=lambda item: item[0]))
+    summed: dict[tuple[str, str], float] = {}
     for u, v, d in P.edges(data=True):
-        w = d.get("weight", 1.0)
-        if S.has_edge(u, v):
-            S[u][v]["weight"] += w
-        else:
-            S.add_edge(u, v, weight=w)
+        key = (u, v) if u <= v else (v, u)
+        summed[key] = summed.get(key, 0.0) + d.get("weight", 1.0)
+    for (u, v), w in sorted(summed.items()):
+        S.add_edge(u, v, weight=w)
     return S
 
 
