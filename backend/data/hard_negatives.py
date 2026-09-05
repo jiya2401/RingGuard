@@ -28,15 +28,34 @@ from backend.data.config import GeneratorConfig
 from backend.data.model import (
     BANK_ACCOUNT,
     CARD,
+    DEVICE,
     Entity,
+    MANDATE,
     PAYEE_MERCHANT,
     Payment,
     RingPlant,
+    SESSION,
     TRANSACTION,
     UPI_ID,
     USER,
 )
 from backend.data.normal import Market, _ensure_session
+
+
+def _dedicated_card(entities: dict, rng: np.random.Generator, reason: str) -> str:
+    """A card owned ONLY by the given community (no accidental global sharing)."""
+    cid = next_id(entities, CARD)
+    append(entities, Entity(cid, CARD, ts(-60, int(rng.integers(0, 24))),
+                            {"issuer": choice(rng, ["VISA", "MC", "RUPAY"]),
+                             "last4": f"{int(rng.integers(0, 10000)):04d}"}, reason=reason))
+    return cid
+
+
+def _dedicated_device(entities: dict, rng: np.random.Generator, reason: str) -> str:
+    did = next_id(entities, DEVICE)
+    append(entities, Entity(did, DEVICE, ts(-60, int(rng.integers(0, 24))),
+                            {"kind": choice(rng, ["mobile", "desktop", "tablet"])}, reason=reason))
+    return did
 
 
 def _legit_community(
@@ -67,8 +86,25 @@ def _legit_community(
         users.append(uid)
         age_days = int(rng.integers(account_age_range[0], account_age_range[1]))
         created_at = ts(-age_days, int(rng.integers(0, 24)), int(rng.integers(0, 60)))
-        own_card = choice(rng, market.cards)
-        own_upi = choice(rng, market.upi_ids)
+        own_card = _dedicated_card(entities, rng, f"{community_type} member {uid} private card")
+        own_upi = next_id(entities, UPI_ID)
+        append(
+            entities,
+            Entity(
+                own_upi, UPI_ID, ts(-20, int(rng.integers(0, 24))),
+                {"handle": choice(rng, ["@okicici", "@okhdfcbank", "@ybl"])},
+                reason=f"private UPI handle for {community_type} member {uid}",
+            ),
+        )
+        own_bank = next_id(entities, BANK_ACCOUNT)
+        append(
+            entities,
+            Entity(
+                own_bank, BANK_ACCOUNT, ts(-30, int(rng.integers(0, 24))),
+                {"bank": choice(rng, ["HDFC", "ICICI", "SBI"])},
+                reason=f"private bank account for {community_type} member {uid}",
+            ),
+        )
         favorites = pick(rng, market.merchants, min(4, len(market.merchants)))
         merchants.extend(favorites)
 
@@ -83,6 +119,7 @@ def _legit_community(
                     "community": community_type,
                     "card": own_card,
                     "upi": own_upi,
+                    "bank": own_bank,
                     "shared_card": shared_card,
                     "home_ip": shared.get("ip"),
                     "address": shared.get("address"),
@@ -157,7 +194,7 @@ def _transactions_for_members(
                 else:
                     instr_type, instrument = BANK_ACCOUNT, choice(rng, market.bank_ids)
 
-                ip = attr["home_ip"] if rng.uniform() < 0.75 else choice(rng, market.ips)
+                ip = attr.get("home_ip") if attr.get("home_ip") and rng.uniform() < 0.75 else choice(rng, market.ips)
                 session_id = _ensure_session(entities, uid, day, when, device, ip, sessions)
 
                 txn_id = next_txn_id(entities)
@@ -210,8 +247,8 @@ def build_household(
     shared = {
         "address": choice(rng, market.addresses),
         "ip": choice(rng, market.ips),
-        "devices": [choice(rng, market.devices) for _ in range(2)],
-        "card": choice(rng, market.cards),
+        "devices": [_dedicated_device(entities, rng, "household shared device") for _ in range(2)],
+        "card": _dedicated_card(entities, rng, "household family card"),
     }
     return _legit_community(
         rng, cfg, entities, payments, market, "household", cfg.household_size, shared,
@@ -231,7 +268,7 @@ def build_office(
     """Employees sharing office IP and company devices, weekday work hours."""
     shared = {
         "ip": choice(rng, market.ips),
-        "devices": [choice(rng, market.devices) for _ in range(2)],
+        "devices": [_dedicated_device(entities, rng, "office shared device") for _ in range(2)],
     }
     return _legit_community(
         rng, cfg, entities, payments, market, "office", cfg.office_size, shared,
@@ -252,7 +289,7 @@ def build_campus(
     """Students sharing campus network and lab devices, irregular hours."""
     shared = {
         "ip": choice(rng, market.ips),
-        "devices": [choice(rng, market.devices) for _ in range(3)],
+        "devices": [_dedicated_device(entities, rng, "campus shared device") for _ in range(3)],
     }
     return _legit_community(
         rng, cfg, entities, payments, market, "campus", cfg.campus_size, shared,
@@ -273,8 +310,7 @@ def build_business(
     """Organizational users sharing company infrastructure and bank accounts."""
     shared = {
         "ip": choice(rng, market.ips),
-        "devices": [choice(rng, market.devices) for _ in range(2)],
-        "bank": choice(rng, market.bank_ids),
+        "devices": [_dedicated_device(entities, rng, "business shared device") for _ in range(2)],
     }
     return _legit_community(
         rng, cfg, entities, payments, market, "business", cfg.business_size, shared,
@@ -294,7 +330,8 @@ def build_family_card(
 ) -> RingPlant:
     """Multiple legit users transacting on one shared card (policy 'shared_card')."""
     shared = {
-        "card": choice(rng, market.cards),
+        "card": _dedicated_card(entities, rng, "family-shared card"),
+        "ip": choice(rng, market.ips),
         "address": choice(rng, market.addresses),
     }
     return _legit_community(

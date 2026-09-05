@@ -175,9 +175,13 @@ def _sync_members_txns(
                 mch = payee
             amount = amount_fn(rng)
 
-            if rng.uniform() < cfg.noise_level:  # inject normal-looking signal
-                device = choice(rng, market.devices)
-                ip = choice(rng, market.ips)
+            if rng.uniform() < cfg.noise_level:  # within-ring diversity (spec §15.2)
+                pool_devs = [x for x in shared["devices"] if x != device] if len(shared["devices"]) > 1 else []
+                if pool_devs:
+                    device = choice(rng, pool_devs)
+                pool_ips = [x for x in shared["ips"] if x != ip] if len(shared["ips"]) > 1 else []
+                if pool_ips:
+                    ip = choice(rng, pool_ips)
 
             if card and rng.uniform() < 0.85:
                 instr_type, instrument = CARD, card

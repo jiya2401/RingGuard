@@ -160,12 +160,55 @@ def generate_normal_users(
         uid = next_id(entities, USER)
         user_ids.append(uid)
         home_ip = choice(rng, market.ips)
-        primary_device = choice(rng, market.devices)
-        secondary_pool = [d for d in market.devices if d != primary_device]
-        secondary_device = choice(rng, secondary_pool) if secondary_pool else primary_device
-        card = choice(rng, market.cards)
-        upi = choice(rng, market.upi_ids)
-        bank = choice(rng, market.bank_ids)
+        # Realism: most users own mostly-private devices/cards. Only the rest
+        # draw from the shared market pool (which is where sharing happens),
+        # so shared infrastructure stays an informative, concentrated signal.
+        if rng.uniform() < cfg.privacy_level:
+            primary_device = next_id(entities, DEVICE)
+            secondary_device = next_id(entities, DEVICE)
+            for dev, label in ((primary_device, "primary"), (secondary_device, "secondary")):
+                append(
+                    entities,
+                    Entity(
+                        dev, DEVICE, ts(-30, int(rng.integers(0, 24))),
+                        {"kind": choice(rng, ["mobile", "desktop"]), "os": choice(rng, ["android", "ios"])},
+                        reason=f"private {label} device for {uid}",
+                    ),
+                )
+            card = next_id(entities, CARD)
+            append(
+                entities,
+                Entity(
+                    card, CARD, ts(-30, int(rng.integers(0, 24))),
+                    {"issuer": choice(rng, ["VISA", "MC", "RUPAY"]), "last4": f"{int(rng.integers(0, 10000)):04d}"},
+                    reason=f"private card for {uid}",
+                ),
+            )
+        else:
+            primary_device = choice(rng, market.devices)
+            secondary_pool = [d for d in market.devices if d != primary_device]
+            secondary_device = choice(rng, secondary_pool) if secondary_pool else primary_device
+            card = choice(rng, market.cards)
+        # Bank accounts and UPI handles are *per-user* in reality (ownership is
+        # not shared among unrelated consumers). Give each user their own.
+        upi = next_id(entities, UPI_ID)
+        append(
+            entities,
+            Entity(
+                upi, UPI_ID, ts(-20, int(rng.integers(0, 24))),
+                {"handle": choice(rng, ["@okicici", "@okhdfcbank", "@ybl"])},
+                reason=f"private UPI handle for {uid}",
+            ),
+        )
+        bank = next_id(entities, BANK_ACCOUNT)
+        append(
+            entities,
+            Entity(
+                bank, BANK_ACCOUNT, ts(-30, int(rng.integers(0, 24))),
+                {"bank": choice(rng, ["HDFC", "ICICI", "SBI", "Kotak"])},
+                reason=f"private bank account for {uid}",
+            ),
+        )
         addr = choice(rng, market.addresses)
         phone = choice(rng, market.phones)
         favorites = pick(rng, market.merchants, min(3, len(market.merchants)))

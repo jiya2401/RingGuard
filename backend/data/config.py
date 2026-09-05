@@ -41,6 +41,7 @@ class GeneratorConfig:
     # ---- signal controls ----
     noise_level: float = 0.15  # 0..1: fraction of abuse activity made "normal-looking"
     attack_intensity: float = 1.0  # scales synchronization / burst tightness
+    privacy_level: float = 0.45  # 0..1: fraction of normal users with PRIVATE device+card
 
     # ---- hard negatives (legitimate sharing, spec §6) ----
     n_households: int = 2
@@ -67,6 +68,8 @@ class GeneratorConfig:
             raise ValueError("n_users and days must be positive; n_transactions must be >= 0")
         if not (0.0 <= self.noise_level <= 1.0):
             raise ValueError("noise_level must be in [0, 1]")
+        if not (0.0 <= self.privacy_level <= 1.0):
+            raise ValueError("privacy_level must be in [0, 1]")
         if self.attack_intensity <= 0:
             raise ValueError("attack_intensity must be > 0")
         if not self.archetypes <= frozenset(ARCHETYPES):
@@ -99,6 +102,7 @@ def tiny_config(**overrides) -> GeneratorConfig:
         n_mandates=2,
         n_transactions=400,
         days=30,
+        privacy_level=0.55,
         n_rings=2,
         ring_size=4,
         n_emerging_rings=1,
@@ -130,6 +134,7 @@ def demo_config(**overrides) -> GeneratorConfig:
         n_mandates=30,
         n_transactions=12_000,
         days=30,
+        privacy_level=0.45,
         n_rings=4,
         ring_size=8,
         n_emerging_rings=1,
