@@ -32,7 +32,10 @@ SHARED_REL_TYPES = (
 
 # A resource touched by more users than this is treated as shared
 # infrastructure, not evidence of coordination (see cap rationale below).
-MAX_SHARED_FANOUT = 6
+# The floor must exceed the largest plausible single ring (spec §5: rings of
+# ~8-12 accounts); with the original floor of 6, an 8-account device farm in
+# a *small* graph was severed from the projection entirely.
+MAX_SHARED_FANOUT = 8
 
 # The fan-out cap scales with the population: a resource used by more than
 # FANOUT_POP_FRACTION of *all* users is population-level infrastructure.

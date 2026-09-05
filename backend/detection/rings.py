@@ -19,6 +19,7 @@ only sees events up to that time (no future edges leak in).
 
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass, field
 from typing import Any
 
@@ -172,6 +173,38 @@ def _primary_pattern(device_coverage: float, card_coverage: float, flow_coverage
     return "shared-infrastructure cluster"
 
 
+# Two-pass discovery bounds (see `discover_rings`): a base community is
+# re-partitioned at escalating resolution only when it is larger than
+# max(BLOB_SPLIT_MIN, BLOB_POP_FRACTION * graph users). Genuine small
+# clusters never reach the splitter; oversized background blobs do.
+BLOB_SPLIT_MIN = 14
+BLOB_POP_FRACTION = 0.15
+BLOB_RESOLUTIONS = (1.6, 2.6, 4.0)
+
+
+def _partition_blob(
+    S: nx.Graph,
+    blob: set[str],
+    depth: int,
+    max_blob: int,
+    seed: int,
+    finals: list[set[str]],
+) -> None:
+    """Recursively split an oversized community at escalating resolution."""
+    if len(blob) <= max_blob or depth >= len(BLOB_RESOLUTIONS):
+        finals.append(blob)
+        return
+    sub = S.subgraph(blob)
+    parts = nx.community.louvain_communities(
+        sub, weight="weight", resolution=BLOB_RESOLUTIONS[depth], seed=seed
+    )
+    if len(parts) <= 1:
+        finals.append(blob)
+        return
+    for part in sorted(parts, key=min):
+        _partition_blob(S, set(part), depth + 1, max_blob, seed, finals)
+
+
 def _simple_weighted(P: nx.MultiDiGraph) -> nx.Graph:
     """Collapse the (multi-)projection into a simple graph, summing weights.
 
@@ -195,25 +228,40 @@ def discover_rings(
     G: nx.MultiDiGraph,
     min_users: int = 3,
     min_density: float = 0.15,
-    resolution: float = 1.5,
+    resolution: float = 1.0,
     seed: int = 0,
 ) -> list[Ring]:
     """Discover candidate rings from the graph snapshot `G`.
 
-    Candidates are Louvain communities of the weighted user-coordination
-    projection that are large enough to be structurally significant.
-    The fixed `seed` keeps the partition deterministic.
+    Two-pass Louvain on the weighted user-coordination projection
+    (deterministic: canonical edge order + fixed `seed`):
+
+    1. Base pass at standard `resolution` 1.0 — high base resolution
+       shatters small genuine clusters (an 8-account ring clique splits
+       into singletons at 1.5; the M8 growth replay needs early 2-3 user
+       clusters to survive), but at 1.0 background infrastructure can
+       merge into one oversized blob.
+    2. Only blobs larger than `max_blob` are split recursively at
+       escalating resolution (1.6 -> 2.6 -> 4.0). Splitting inside an
+       oversized blob is where high resolution helps; genuine small
+       clusters are never touched because they are below `max_blob`.
     """
     P = project_users(G)
     S = _simple_weighted(P)
+    n_users = S.number_of_nodes()
+    max_blob = max(BLOB_SPLIT_MIN, math.ceil(BLOB_POP_FRACTION * n_users))
+
+    finals: list[set[str]] = []
+    for comp in sorted(
+        nx.community.louvain_communities(S, weight="weight", resolution=resolution, seed=seed),
+        key=min,
+    ):
+        _partition_blob(S, set(comp), 0, max_blob, seed, finals)
 
     rings: list[Ring] = []
     comp_index = 0
-    communities = nx.community.louvain_communities(
-        S, weight="weight", resolution=resolution, seed=seed
-    )
-    for comp in sorted(communities, key=min):
-        comp_set = set(comp)
+    for comp_set in sorted(finals, key=min):
+        comp_set = set(comp_set)
         if len(comp_set) < min_users:
             continue
         sub = S.subgraph(comp_set)
