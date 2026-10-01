@@ -67,10 +67,12 @@ infrastructure dilution and timing smear, recall falls to **0.4575**; see
 Prerequisites: Python 3.14, Node 22, and Corepack/pnpm.
 
 ```powershell
-cd C:\Users\Mr-A\RingGuard
+git clone https://github.com/<your-username>/RingGuard.git
+cd RingGuard
 
 python -m venv .venv
-.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+.\.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
 
 cd frontend
 corepack enable
@@ -81,21 +83,21 @@ cd ..
 Generate deterministic demo data and evaluation results:
 
 ```powershell
-.\.venv\Scripts\python.exe scripts\generate_demo.py --seed 42 --out data\ecosystem.json
-.\.venv\Scripts\python.exe scripts\run_evaluation.py --seed 42 --out docs\evaluation_results.json
+python scripts\generate_demo.py --seed 42 --out data\ecosystem.json
+python scripts\run_evaluation.py --seed 42 --out docs\evaluation_results.json
 ```
 
-Run the backend:
+Run the backend (terminal 1):
 
 ```powershell
-.\.venv\Scripts\python.exe -m uvicorn backend.api.app:app --host 127.0.0.1 --port 8000 --reload
+python -m uvicorn backend.api.app:app --host 127.0.0.1 --port 8000 --reload
 ```
 
-In a second PowerShell terminal, run the frontend:
+Run the frontend (terminal 2, from the repo root):
 
 ```powershell
-cd C:\Users\Mr-A\RingGuard\frontend
-pnpm run dev
+cd frontend
+pnpm run dev 
 ```
 
 Open `http://localhost:5173`. API health is
@@ -104,11 +106,13 @@ Open `http://localhost:5173`. API health is
 
 ## Verification
 
+With the virtual environment activated:
+
 ```powershell
 # Backend
-.\.venv\Scripts\python.exe -m pytest
-.\.venv\Scripts\python.exe -m compileall -q backend config scripts
-.\.venv\Scripts\python.exe scripts\e2e_smoke.py --demo
+python -m pytest
+python -m compileall -q backend config scripts
+python scripts\e2e_smoke.py --demo
 
 # Frontend
 cd frontend
