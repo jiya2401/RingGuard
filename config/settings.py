@@ -41,6 +41,16 @@ class Settings:
 
     # Runtime behaviour
     log_level: str = field(default_factory=lambda: _env("RINGGUARD_LOG_LEVEL", "INFO"))
+    cors_origins: tuple[str, ...] = field(
+        default_factory=lambda: tuple(
+            origin.strip()
+            for origin in _env(
+                "RINGGUARD_CORS_ORIGINS",
+                "http://localhost:5173,http://127.0.0.1:5173",
+            ).split(",")
+            if origin.strip()
+        )
+    )
 
     def ensure_directories(self) -> None:
         """Create runtime data directories if they do not exist."""

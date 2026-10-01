@@ -1,0 +1,26 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      RINGGUARD_DB_PATH: /app/data/ringguard.db
+      RINGGUARD_CORS_ORIGINS: http://localhost:8080
+    volumes:
+      - ringguard-data:/app/data
+    ports:
+      - "8000:8000"
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        VITE_API_URL: /api
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - "8080:80"
+
+volumes:
+  ringguard-data:

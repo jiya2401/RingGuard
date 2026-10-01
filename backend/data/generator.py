@@ -10,7 +10,7 @@ chronologically at the end for the storage / API layer.
 from __future__ import annotations
 
 from backend.data.archetypes import generate_archetypes
-from backend.data.common import component_rng
+from backend.data.common import component_rng, ts
 from backend.data.config import GeneratorConfig, demo_config
 from backend.data.hard_negatives import generate_hard_negatives
 from backend.data.model import (
@@ -68,4 +68,9 @@ def _profile(ecosystem: Ecosystem, cfg: GeneratorConfig) -> dict:
         "noise_level": cfg.noise_level,
         "attack_intensity": cfg.attack_intensity,
         "days": cfg.days,
+        # Declared observation window (spec §8/§16): in-window events live
+        # here; pre-existing population (e.g. households) carries older
+        # relationship edges that must not stretch the day axis.
+        "window_start": ts(0),
+        "window_end": ts(cfg.days),
     }

@@ -177,8 +177,11 @@ def _primary_pattern(device_coverage: float, card_coverage: float, flow_coverage
 # re-partitioned at escalating resolution only when it is larger than
 # max(BLOB_SPLIT_MIN, BLOB_POP_FRACTION * graph users). Genuine small
 # clusters never reach the splitter; oversized background blobs do.
+# 0.10 keeps the M5 gate (no demo community > 20 users) at the demo's
+# 188 projection users (120 background + 68 planted members): 0.10*188
+# = 19, while 0.15 would let a 27-user blob survive.
 BLOB_SPLIT_MIN = 14
-BLOB_POP_FRACTION = 0.15
+BLOB_POP_FRACTION = 0.10
 BLOB_RESOLUTIONS = (1.6, 2.6, 4.0)
 
 

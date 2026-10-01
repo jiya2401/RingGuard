@@ -49,15 +49,23 @@ from backend.risk.legitimacy import DAY_S, default_ref
 
 
 def graph_t0(G: nx.MultiDiGraph) -> int:
-    """Start of the observation window: the earliest *event* timestamp.
+    """Start of the observation window for the day axis.
 
-    Accounts created before any activity are pre-existing population
-    (households, established customers) — the emerging-risk story starts
-    when events start flowing. Pass `t0` explicitly to `risk_history` /
+    The data layer declares its observation window (`window_start` on
+    the ecosystem profile, copied onto the graph by `build_graph`) —
+    generated ecosystems place in-window events there, while legitimate
+    pre-existing population (households, established customers) carries
+    older relationship edges that must not stretch the axis. Without a
+    stamp, fall back to the earliest *event* timestamp: accounts created
+    before any activity are pre-existing population, so creation alone
+    never starts the story. Pass `t0` explicitly to `risk_history` /
     `emerging_report` to analyse a specific window instead.
     """
-    stamped = [d.get("timestamp", 0) for _, _, d in G.edges(data=True)]
-    return min([t for t in stamped if t] or [0])
+    stamped = G.graph.get("window_start")
+    if stamped is not None:
+        return int(stamped)
+    ts_all = [d.get("timestamp", 0) for _, _, d in G.edges(data=True)]
+    return min([t for t in ts_all if t] or [0])
 
 
 def snapshot_at(G: nx.MultiDiGraph, as_of: int) -> nx.MultiDiGraph:
@@ -67,7 +75,12 @@ def snapshot_at(G: nx.MultiDiGraph, as_of: int) -> nx.MultiDiGraph:
     nodes created after `as_of`. Non-user entities stay (an entity
     itself has no creation story; only its edges do).
     """
+    # NetworkX does not copy graph-level metadata when a graph is rebuilt
+    # node-by-node.  The observation window is part of the causal contract,
+    # so preserve it (and any future graph metadata) explicitly.
     H = nx.MultiDiGraph()
+    H.graph.update(G.graph)
+    H.graph["snapshot_as_of"] = int(as_of)
     for n, d in G.nodes(data=True):
         if d.get("entity_type") == "USER" and d.get("created_at", 0) > as_of:
             continue
@@ -183,7 +196,10 @@ def score_at(
     account cannot contribute risk before it exists. `G` may be the full
     graph or an already-truncated snapshot (truncation is idempotent).
     """
-    H = snapshot_at(G, as_of)
+    # `risk_history` and `emerging_report` already build one shared snapshot
+    # per checkpoint.  Reusing that exact snapshot avoids copying the full
+    # 12k-transaction demo graph once per ring (hundreds of needless copies).
+    H = G if G.graph.get("snapshot_as_of") == int(as_of) else snapshot_at(G, as_of)
     known = [u for u in users if u in H]
     candidate = Ring(
         ring_id="TRAJECTORY",
@@ -220,17 +236,12 @@ def risk_history(
     Each point scores only what existed at that moment; `what_changed`
     diffs the raw counters and signals against the previous checkpoint
     (spec §16: "explain exactly what changed"). `t0` anchors the day
-    axis; by default it is the tracked cluster's own story origin — the
-    earliest activity among `users` — so pre-existing population does
-    not stretch the axis.
+    axis; by default it is the graph's declared observation-window start
+    (or the earliest activity when metadata is unavailable), so old
+    pre-existing population does not stretch the axis.
     """
     if t0 is None:
-        stamped = [
-            d.get("timestamp", 0)
-            for u in set(users) & set(G.nodes)
-            for _v, _w, d in G.out_edges(u, data=True)
-        ]
-        t0 = min([s for s in stamped if s] or [graph_t0(G)])
+        t0 = graph_t0(G)
     users = sorted(set(users))
     history: list[dict[str, Any]] = []
     prev: dict[str, Any] | None = None
@@ -239,7 +250,7 @@ def risk_history(
         snap = snapshot_at(G, as_of)
         point = _flatten(score_at(snap, users, as_of), as_of, t0)
         point["counters"] = _coordination_counters(snap, set(users), as_of)
-        _apply_momentum(point, origin)
+        _apply_momentum(point, origin, prev)
         point["what_changed"] = _what_changed(prev, point) if prev else []
         history.append(point)
         prev = point
@@ -274,7 +285,11 @@ def _momentum_growth(origin: dict[str, Any] | None, curr: dict[str, Any]) -> flo
     return max(min(1.0, g_users), min(1.0, g_instruments), min(1.0, g_flow))
 
 
-def _apply_momentum(point: dict[str, Any], origin: dict[str, Any] | None) -> None:
+def _apply_momentum(
+    point: dict[str, Any],
+    origin: dict[str, Any] | None,
+    previous: dict[str, Any] | None = None,
+) -> None:
     """Attach the growth-aware emerging risk to a trajectory point.
 
     Keeps `base_risk` (the M6 engine's score) and `momentum` on the
@@ -283,7 +298,35 @@ def _apply_momentum(point: dict[str, Any], origin: dict[str, Any] | None) -> Non
     growth = _momentum_growth(origin, point)
     point["base_risk"] = point["risk"]
     point["momentum"] = round(growth, 3)
-    point["risk"] = min(100, round(point["risk"] * (1 + MOMENTUM_CAP * growth)))
+    calculated = min(100, round(point["risk"] * (1 + MOMENTUM_CAP * growth)))
+    point["calculated_risk"] = calculated
+
+    # Accumulating structural evidence must never look like a risk reversal.
+    # Share-based base layers can dilute when new, initially quiet members join;
+    # hold the previous displayed score only at checkpoints where durable
+    # structural counters actually increased. Quiet checkpoints remain free to
+    # decay as temporal evidence ages. The floor and raw calculated value are
+    # both exposed so this adjustment stays auditable.
+    grew = False
+    if previous is not None:
+        before, after = previous["counters"], point["counters"]
+        grew = any(
+            after[name] > before[name]
+            for name in (
+                "known_users",
+                "shared_devices",
+                "shared_cards",
+                "internal_transfers",
+            )
+        )
+    point["growth_floor_applied"] = bool(
+        grew and previous is not None and calculated < previous["risk"]
+    )
+    point["risk"] = (
+        max(calculated, previous["risk"])
+        if grew and previous is not None
+        else calculated
+    )
 
 
 def _what_changed(prev: dict[str, Any], curr: dict[str, Any]) -> list[str]:
@@ -368,7 +411,7 @@ def emerging_report(
             continue
         origin: dict[str, Any] | None = None
         for i, pt in enumerate(pts):
-            _apply_momentum(pt, origin)
+            _apply_momentum(pt, origin, pts[i - 1] if i else None)
             origin = origin or pt
             pt["what_changed"] = _what_changed(pts[i - 1], pt) if i else []
         first_risk = pts[0]["risk"]

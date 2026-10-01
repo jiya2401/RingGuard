@@ -23,6 +23,7 @@ htmlcov/
 node_modules/
 frontend/dist/
 frontend/build/
+*.tsbuildinfo
 *.local
 
 # Editor / OS
@@ -36,3 +37,4 @@ Thumbs.db
 .env
 .env.*
 !.env.example
+.pnpm-store/

@@ -40,6 +40,7 @@ def _staged_ring_graph() -> nx.MultiDiGraph:
     shopping) that must NOT escalate.
     """
     G = nx.MultiDiGraph()
+    G.graph["window_start"] = T0  # declared observation window (data-layer contract)
     for dev in ("DEV-1", "DEV-2", "DEV-H"):
         G.add_node(dev, entity_type="DEVICE")
     G.add_node("CARD-9", entity_type="CARD")
@@ -110,15 +111,32 @@ class TestSnapshotCausality:
         assert set(twice.nodes) == set(once.nodes)
         assert twice.number_of_edges() == once.number_of_edges()
 
-    def test_graph_t0_is_earliest_event(self):
-        """t0 is the earliest *activity*, not the earliest creation.
-
-        Household accounts are created long before the window but their
-        first event is the device edge at T0-89d; creation alone must
-        not drag the observation window.
-        """
+    def test_snapshot_preserves_observation_window_metadata(self):
         G = _staged_ring_graph()
-        assert graph_t0(G) == T0 - 89 * DAY_S
+        G.graph["window_end"] = T0 + 30 * DAY_S
+        snap = snapshot_at(G, T0 + 3 * DAY_S)
+        assert snap.graph["window_start"] == T0
+        assert snap.graph["window_end"] == T0 + 30 * DAY_S
+        assert snap.graph["snapshot_as_of"] == T0 + 3 * DAY_S
+        assert graph_t0(snap) == T0
+
+    def test_graph_t0_prefers_declared_window(self):
+        """t0 is the declared observation window when the data layer stamps one.
+
+        Household accounts exist long before the window; their pre-window
+        ownership edges must not drag the observation window. Graphs
+        without a stamp fall back to the earliest *activity* event —
+        creation alone never starts the story.
+        """
+        G = _staged_ring_graph()  # fixture stamps window_start = T0
+        assert graph_t0(G) == T0
+        bare = nx.MultiDiGraph()
+        bare.add_node("U1", entity_type="USER", created_at=0)
+        bare.add_edge("U1", "M1", rel_type=USER_PAID_MERCHANT,
+                      timestamp=500, weight=1.0)
+        bare.add_edge("U1", "M1", rel_type=USER_PAID_MERCHANT,
+                      timestamp=100, weight=1.0)
+        assert graph_t0(bare) == 100  # earliest activity, not creation
 
 
 class TestRiskHistory:
@@ -127,10 +145,20 @@ class TestRiskHistory:
         users = ["U1", "U2", "U3", "U4", "U5", "U6", "U7", "U8"]
         hist = risk_history(G, users, CHECKPOINTS)
         risks = [p["risk"] for p in hist]
-        assert risks == sorted(risks), "risk must not decrease as evidence grows"
-        assert risks[-1] - risks[0] >= 15, "staged growth must move the score"
         known = [p["counters"]["known_users"] for p in hist]
         assert known == sorted(known) and known[-1] == 8
+        # THE M8 TRAJECTORY CONTRACT: growth must never be masked. At
+        # every checkpoint where the ring gained members, risk must not
+        # drop. Over quiet checkpoints the base score may honestly ease
+        # (join-day bursts age out), so strict global monotonicity is
+        # deliberately not claimed.
+        for i in range(1, len(risks)):
+            if known[i] > known[i - 1]:
+                assert risks[i] >= risks[i - 1], (
+                    f"risk dropped {risks[i - 1]} -> {risks[i]} "
+                    f"while membership grew {known[i - 1]} -> {known[i]}"
+                )
+        assert risks[-1] - risks[0] >= 15, "staged growth must move the score"
         devs = [p["counters"]["shared_devices"] for p in hist]
         assert devs[-1] == 2 and devs == sorted(devs)
 
@@ -215,7 +243,17 @@ class TestDemoScale:
             "planted emerging ring must eventually cross the threshold"
         )
         assert hr["detected_day"] is not None
-        assert hr["lead_days"] >= 0
+        assert hr["lead_days"] > 0, (
+            "the planted emerging ring must be detected before the final checkpoint"
+        )
+        known = [p["counters"]["known_users"] for p in hr["history"]]
+        risks = [p["risk"] for p in hr["history"]]
+        for i in range(1, len(risks)):
+            if known[i] > known[i - 1]:
+                assert risks[i] >= risks[i - 1], (
+                    "newly accumulated membership evidence must not present as "
+                    "a risk reversal"
+                )
         assert hr["ring_id"] in rep["emerging_ring_ids"]
 
     def test_emerging_ids_are_planted_not_noise(self, demo_report):

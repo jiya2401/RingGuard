@@ -148,6 +148,16 @@ def build_graph(ecosystem: Ecosystem, as_of: int | None = None) -> nx.MultiDiGra
         _add(G, p.transaction_id, p.ip_id, TRANSACTION_USED_IP, t)
         _add(G, p.transaction_id, p.device_id, TRANSACTION_USED_DEVICE, t)
 
+    # Propagate the declared observation window (spec §8/§16): the day
+    # axis of the emerging-risk engine starts here, so pre-existing
+    # population edges (households created long before) do not stretch
+    # it. See backend/risk/emerging.py::graph_t0.
+    profile = getattr(ecosystem, "profile", None) or {}
+    if profile.get("window_start") is not None:
+        G.graph["window_start"] = int(profile["window_start"])
+    if profile.get("window_end") is not None:
+        G.graph["window_end"] = int(profile["window_end"])
+
     return G
 
 

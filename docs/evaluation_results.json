@@ -1,0 +1,292 @@
+{
+  "adversarial": {
+    "combined_evasion": {
+      "f1": 0.5882,
+      "false_positive_rate": 0.0061,
+      "k": 100,
+      "positive_support": 153,
+      "pr_auc": 0.7846,
+      "precision": 0.8235,
+      "precision_at_k": 0.84,
+      "recall": 0.4575,
+      "recall_delta_vs_original": -0.5425,
+      "roc_auc": 0.991,
+      "support": 2593,
+      "threshold": 0.7558
+    },
+    "infrastructure_dilution_75pct": {
+      "f1": 0.6198,
+      "false_positive_rate": 0.0057,
+      "k": 100,
+      "positive_support": 153,
+      "pr_auc": 0.8109,
+      "precision": 0.8427,
+      "precision_at_k": 0.86,
+      "recall": 0.4902,
+      "recall_delta_vs_original": -0.5098,
+      "roc_auc": 0.9926,
+      "support": 2593,
+      "threshold": 0.7558
+    },
+    "original": {
+      "f1": 0.9134,
+      "false_positive_rate": 0.0119,
+      "k": 100,
+      "positive_support": 153,
+      "pr_auc": 0.904,
+      "precision": 0.8407,
+      "precision_at_k": 0.87,
+      "recall": 1.0,
+      "recall_delta_vs_original": 0.0,
+      "roc_auc": 0.9957,
+      "support": 2593,
+      "threshold": 0.7558
+    },
+    "timing_smear": {
+      "f1": 0.8895,
+      "false_positive_rate": 0.0156,
+      "k": 100,
+      "positive_support": 153,
+      "pr_auc": 0.8943,
+      "precision": 0.801,
+      "precision_at_k": 0.86,
+      "recall": 1.0,
+      "recall_delta_vs_original": 0.0,
+      "roc_auc": 0.9952,
+      "support": 2593,
+      "threshold": 0.7558
+    }
+  },
+  "baseline_features": [
+    "log_amount",
+    "hour_sin",
+    "hour_cos",
+    "is_p2p",
+    "is_card",
+    "is_bank",
+    "is_upi",
+    "account_age_days"
+  ],
+  "ecosystem_digest": "5891d2ec42fcd221a7ce1fd9e4f644c4c69e4707ea01d3e4a6ab748a7c48864c",
+  "generalization": {
+    "per_archetype_recall": {
+      "B": {
+        "recall": 1.0,
+        "support": 32
+      },
+      "C": {
+        "recall": 1.0,
+        "support": 48
+      },
+      "H": {
+        "recall": 1.0,
+        "support": 73
+      }
+    },
+    "test_archetypes_unseen_as_labels_during_fitting": [],
+    "unseen_archetype_holdout": {
+      "available": true,
+      "held_out_archetype": "H",
+      "metrics": {
+        "f1": 0.7684,
+        "false_positive_rate": 0.018,
+        "k": 100,
+        "positive_support": 73,
+        "pr_auc": 0.7875,
+        "precision": 0.6239,
+        "precision_at_k": 0.71,
+        "recall": 1.0,
+        "roc_auc": 0.9955,
+        "support": 2513,
+        "threshold": 0.6172
+      },
+      "test_positive_support": 73,
+      "training_rows_removed": 10
+    }
+  },
+  "graph_detection": {
+    "emerging_ring_detection": [
+      {
+        "detected_day": 18.0,
+        "final_risk": 74,
+        "lead_days": 12.0,
+        "plant_id": "R-H-01"
+      }
+    ],
+    "hard_negative_false_positive_rate": {
+      "25": {
+        "abuse_detection_rate": 1.0,
+        "hard_negative_fpr": 0.0
+      },
+      "45": {
+        "abuse_detection_rate": 0.6,
+        "hard_negative_fpr": 0.0
+      },
+      "65": {
+        "abuse_detection_rate": 0.0,
+        "hard_negative_fpr": 0.0
+      }
+    },
+    "ring_detection_recall": 1.0,
+    "rings_detected": 5,
+    "rings_planted": 5
+  },
+  "graph_features": [
+    "payer_prior_txns",
+    "payer_prior_devices",
+    "payer_prior_instruments",
+    "payer_prior_recipients",
+    "device_prior_users",
+    "instrument_prior_users",
+    "ip_prior_users",
+    "seconds_since_previous_log"
+  ],
+  "models": {
+    "baseline_logistic_regression": {
+      "hard_negative_transaction_fpr": 0.0,
+      "per_archetype_recall": {
+        "B": {
+          "recall": 1.0,
+          "support": 32
+        },
+        "C": {
+          "recall": 1.0,
+          "support": 48
+        },
+        "H": {
+          "recall": 1.0,
+          "support": 73
+        }
+      },
+      "test": {
+        "f1": 0.3085,
+        "false_positive_rate": 0.2811,
+        "k": 100,
+        "positive_support": 153,
+        "pr_auc": 0.1651,
+        "precision": 0.1824,
+        "precision_at_k": 0.22,
+        "recall": 1.0,
+        "roc_auc": 0.8236,
+        "support": 2593,
+        "threshold": 0.3109
+      },
+      "validation_threshold": 0.3109
+    },
+    "baseline_random_forest": {
+      "hard_negative_transaction_fpr": 0.0,
+      "per_archetype_recall": {
+        "B": {
+          "recall": 0.0,
+          "support": 32
+        },
+        "C": {
+          "recall": 0.1667,
+          "support": 48
+        },
+        "H": {
+          "recall": 0.8219,
+          "support": 73
+        }
+      },
+      "test": {
+        "f1": 0.2482,
+        "false_positive_rate": 0.134,
+        "k": 100,
+        "positive_support": 153,
+        "pr_auc": 0.2898,
+        "precision": 0.1722,
+        "precision_at_k": 0.41,
+        "recall": 0.4444,
+        "roc_auc": 0.8172,
+        "support": 2593,
+        "threshold": 0.4125
+      },
+      "validation_threshold": 0.4125
+    },
+    "graph_enhanced_logistic_regression": {
+      "hard_negative_transaction_fpr": 0.0,
+      "per_archetype_recall": {
+        "B": {
+          "recall": 1.0,
+          "support": 32
+        },
+        "C": {
+          "recall": 1.0,
+          "support": 48
+        },
+        "H": {
+          "recall": 1.0,
+          "support": 73
+        }
+      },
+      "test": {
+        "f1": 0.9134,
+        "false_positive_rate": 0.0119,
+        "k": 100,
+        "positive_support": 153,
+        "pr_auc": 0.904,
+        "precision": 0.8407,
+        "precision_at_k": 0.87,
+        "recall": 1.0,
+        "roc_auc": 0.9957,
+        "support": 2593,
+        "threshold": 0.7558
+      },
+      "validation_threshold": 0.7558
+    },
+    "graph_enhanced_random_forest": {
+      "hard_negative_transaction_fpr": 0.0,
+      "per_archetype_recall": {
+        "B": {
+          "recall": 0.875,
+          "support": 32
+        },
+        "C": {
+          "recall": 0.7083,
+          "support": 48
+        },
+        "H": {
+          "recall": 1.0,
+          "support": 73
+        }
+      },
+      "test": {
+        "f1": 0.8359,
+        "false_positive_rate": 0.0143,
+        "k": 100,
+        "positive_support": 153,
+        "pr_auc": 0.8698,
+        "precision": 0.7941,
+        "precision_at_k": 0.82,
+        "recall": 0.8824,
+        "roc_auc": 0.9919,
+        "support": 2593,
+        "threshold": 0.1059
+      },
+      "validation_threshold": 0.1059
+    }
+  },
+  "seed": 42,
+  "selected_graph_model": "graph_enhanced_logistic_regression",
+  "split_counts": {
+    "test": 2593,
+    "train": 7739,
+    "validation": 1668
+  },
+  "split_ranges": {
+    "test": {
+      "first_timestamp": 1737849978,
+      "last_timestamp": 1738281021
+    },
+    "train": {
+      "first_timestamp": 1735689620,
+      "last_timestamp": 1737503994
+    },
+    "validation": {
+      "first_timestamp": 1737504872,
+      "last_timestamp": 1737849213
+    }
+  },
+  "synthetic_data_only": true
+}
