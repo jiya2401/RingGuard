@@ -1,3 +1,37 @@
+# Swarm Alignment Hackathon (Nov 6-8, 2026): Disclosure of Prior Work
+
+## Preexisting work (written before Nov 6, 2026)
+
+Everything on the `main` branch at the tag `pre-sprint-baseline` (commits from Sep 4 to Oct 1, 2026) is preexisting. This is the full RingGuard payment-fraud system, originally built for the Razorpay Buildathon:
+
+- synthetic data generator
+- heterogeneous graph builder
+- ring detection
+- risk engine
+- evaluation
+- FastAPI backend 
+- React dashboard
+- attack simulator
+- documentation
+
+## New work done during the sprint (Nov 6-8, 2026)
+
+Everything on the branch `swarm-hackathon` after the `pre-sprint-baseline` tag is new work.
+
+To see exactly what was added, compare the two:
+`https://github.com/jiya2401/RingGuard/compare/pre-sprint-baseline...swarm-hackathon`
+
+### Sprint work log
+
+| Date | New work |
+|---|---|
+| Nov 6 | *(to be filled in)* |
+| Nov 7 | *(to be filled in)* |
+| Nov 8 | *(to be filled in)* |
+
+---
+
+
 <div align="center">
 
 # 🛡️ RingGuard
