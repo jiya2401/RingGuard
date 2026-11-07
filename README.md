@@ -25,9 +25,9 @@ To see exactly what was added, compare the two:
 
 | Date | New work |
 |---|---|
-| Nov 6 | *(to be filled in)* |
-| Nov 7 | *(to be filled in)* |
-| Nov 8 | *(to be filled in)* |
+| Nov 6 | No sprint code written (planning and setup only) |
+| Nov 7 | Agent-event adapter, labeled scenario generator, swarm features, multi-seed evaluation, event-level evasions, identity merging, experiment runner and results (`backend/swarm/`, `scripts/run_swarm_eval.py`, `docs/swarm_results.json`) |
+| Nov 8 | (fill in at the end of the day: figures, report) |
 
 ---
 
