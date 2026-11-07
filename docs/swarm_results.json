@@ -1,0 +1,2029 @@
+{
+ "train_seeds": 10,
+ "test_seeds": 20,
+ "conditions": {
+  "clean": {
+   "ringguard_unmodified": {
+    "auroc": {
+     "value": 0.666,
+     "ci95": [
+      0.6,
+      0.726
+     ]
+    },
+    "covert_tpr": {
+     "value": 0.608,
+     "ci95": [
+      0.525,
+      0.683
+     ]
+    },
+    "sanctioned_fpr": {
+     "value": 0.3,
+     "ci95": [
+      0.233,
+      0.375
+     ]
+    }
+   },
+   "event_volume_baseline": {
+    "auroc": {
+     "value": 0.4,
+     "ci95": [
+      0.357,
+      0.434
+     ]
+    },
+    "covert_tpr": {
+     "value": 0.025,
+     "ci95": [
+      0.0,
+      0.05
+     ]
+    },
+    "sanctioned_fpr": {
+     "value": 0.058,
+     "ci95": [
+      0.025,
+      0.092
+     ]
+    }
+   },
+   "any_shared_resource": {
+    "auroc": {
+     "value": 0.5,
+     "ci95": [
+      0.5,
+      0.5
+     ]
+    },
+    "covert_tpr": {
+     "value": 1.0,
+     "ci95": [
+      1.0,
+      1.0
+     ]
+    },
+    "sanctioned_fpr": {
+     "value": 1.0,
+     "ci95": [
+      1.0,
+      1.0
+     ]
+    }
+   },
+   "policy_only(unsanctioned_share)": {
+    "auroc": {
+     "value": 1.0,
+     "ci95": [
+      1.0,
+      1.0
+     ]
+    },
+    "covert_tpr": {
+     "value": 1.0,
+     "ci95": [
+      1.0,
+      1.0
+     ]
+    },
+    "sanctioned_fpr": {
+     "value": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ]
+    }
+   },
+   "swarm_logreg": {
+    "auroc": {
+     "value": 1.0,
+     "ci95": [
+      1.0,
+      1.0
+     ]
+    },
+    "covert_tpr": {
+     "value": 1.0,
+     "ci95": [
+      1.0,
+      1.0
+     ]
+    },
+    "sanctioned_fpr": {
+     "value": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ]
+    }
+   },
+   "_n_groups_found_pct": 100.0,
+   "_n_test_groups": 240
+  },
+  "registry_missing_0.1": {
+   "ringguard_unmodified": {
+    "auroc": {
+     "value": 0.666,
+     "ci95": [
+      0.6,
+      0.726
+     ]
+    },
+    "covert_tpr": {
+     "value": 0.608,
+     "ci95": [
+      0.525,
+      0.683
+     ]
+    },
+    "sanctioned_fpr": {
+     "value": 0.3,
+     "ci95": [
+      0.233,
+      0.375
+     ]
+    }
+   },
+   "event_volume_baseline": {
+    "auroc": {
+     "value": 0.4,
+     "ci95": [
+      0.357,
+      0.434
+     ]
+    },
+    "covert_tpr": {
+     "value": 0.025,
+     "ci95": [
+      0.0,
+      0.05
+     ]
+    },
+    "sanctioned_fpr": {
+     "value": 0.058,
+     "ci95": [
+      0.025,
+      0.092
+     ]
+    }
+   },
+   "any_shared_resource": {
+    "auroc": {
+     "value": 0.5,
+     "ci95": [
+      0.5,
+      0.5
+     ]
+    },
+    "covert_tpr": {
+     "value": 1.0,
+     "ci95": [
+      1.0,
+      1.0
+     ]
+    },
+    "sanctioned_fpr": {
+     "value": 1.0,
+     "ci95": [
+      1.0,
+      1.0
+     ]
+    }
+   },
+   "policy_only(unsanctioned_share)": {
+    "auroc": {
+     "value": 0.938,
+     "ci95": [
+      0.908,
+      0.963
+     ]
+    },
+    "covert_tpr": {
+     "value": 1.0,
+     "ci95": [
+      1.0,
+      1.0
+     ]
+    },
+    "sanctioned_fpr": {
+     "value": 0.125,
+     "ci95": [
+      0.075,
+      0.183
+     ]
+    }
+   },
+   "swarm_logreg": {
+    "auroc": {
+     "value": 0.948,
+     "ci95": [
+      0.916,
+      0.975
+     ]
+    },
+    "covert_tpr": {
+     "value": 1.0,
+     "ci95": [
+      1.0,
+      1.0
+     ]
+    },
+    "sanctioned_fpr": {
+     "value": 0.125,
+     "ci95": [
+      0.075,
+      0.183
+     ]
+    }
+   },
+   "_n_groups_found_pct": 100.0,
+   "_n_test_groups": 240
+  },
+  "registry_missing_0.25": {
+   "ringguard_unmodified": {
+    "auroc": {
+     "value": 0.666,
+     "ci95": [
+      0.6,
+      0.726
+     ]
+    },
+    "covert_tpr": {
+     "value": 0.608,
+     "ci95": [
+      0.525,
+      0.683
+     ]
+    },
+    "sanctioned_fpr": {
+     "value": 0.3,
+     "ci95": [
+      0.233,
+      0.375
+     ]
+    }
+   },
+   "event_volume_baseline": {
+    "auroc": {
+     "value": 0.4,
+     "ci95": [
+      0.357,
+      0.434
+     ]
+    },
+    "covert_tpr": {
+     "value": 0.025,
+     "ci95": [
+      0.0,
+      0.05
+     ]
+    },
+    "sanctioned_fpr": {
+     "value": 0.058,
+     "ci95": [
+      0.025,
+      0.092
+     ]
+    }
+   },
+   "any_shared_resource": {
+    "auroc": {
+     "value": 0.5,
+     "ci95": [
+      0.5,
+      0.5
+     ]
+    },
+    "covert_tpr": {
+     "value": 1.0,
+     "ci95": [
+      1.0,
+      1.0
+     ]
+    },
+    "sanctioned_fpr": {
+     "value": 1.0,
+     "ci95": [
+      1.0,
+      1.0
+     ]
+    }
+   },
+   "policy_only(unsanctioned_share)": {
+    "auroc": {
+     "value": 0.867,
+     "ci95": [
+      0.833,
+      0.902
+     ]
+    },
+    "covert_tpr": {
+     "value": 1.0,
+     "ci95": [
+      1.0,
+      1.0
+     ]
+    },
+    "sanctioned_fpr": {
+     "value": 0.267,
+     "ci95": [
+      0.196,
+      0.333
+     ]
+    }
+   },
+   "swarm_logreg": {
+    "auroc": {
+     "value": 0.889,
+     "ci95": [
+      0.844,
+      0.933
+     ]
+    },
+    "covert_tpr": {
+     "value": 1.0,
+     "ci95": [
+      1.0,
+      1.0
+     ]
+    },
+    "sanctioned_fpr": {
+     "value": 0.267,
+     "ci95": [
+      0.196,
+      0.342
+     ]
+    }
+   },
+   "_n_groups_found_pct": 100.0,
+   "_n_test_groups": 240
+  },
+  "registry_missing_0.5": {
+   "ringguard_unmodified": {
+    "auroc": {
+     "value": 0.666,
+     "ci95": [
+      0.6,
+      0.726
+     ]
+    },
+    "covert_tpr": {
+     "value": 0.608,
+     "ci95": [
+      0.525,
+      0.683
+     ]
+    },
+    "sanctioned_fpr": {
+     "value": 0.3,
+     "ci95": [
+      0.233,
+      0.375
+     ]
+    }
+   },
+   "event_volume_baseline": {
+    "auroc": {
+     "value": 0.4,
+     "ci95": [
+      0.357,
+      0.434
+     ]
+    },
+    "covert_tpr": {
+     "value": 0.025,
+     "ci95": [
+      0.0,
+      0.05
+     ]
+    },
+    "sanctioned_fpr": {
+     "value": 0.058,
+     "ci95": [
+      0.025,
+      0.092
+     ]
+    }
+   },
+   "any_shared_resource": {
+    "auroc": {
+     "value": 0.5,
+     "ci95": [
+      0.5,
+      0.5
+     ]
+    },
+    "covert_tpr": {
+     "value": 1.0,
+     "ci95": [
+      1.0,
+      1.0
+     ]
+    },
+    "sanctioned_fpr": {
+     "value": 1.0,
+     "ci95": [
+      1.0,
+      1.0
+     ]
+    }
+   },
+   "policy_only(unsanctioned_share)": {
+    "auroc": {
+     "value": 0.746,
+     "ci95": [
+      0.708,
+      0.786
+     ]
+    },
+    "covert_tpr": {
+     "value": 1.0,
+     "ci95": [
+      1.0,
+      1.0
+     ]
+    },
+    "sanctioned_fpr": {
+     "value": 0.508,
+     "ci95": [
+      0.429,
+      0.583
+     ]
+    }
+   },
+   "swarm_logreg": {
+    "auroc": {
+     "value": 0.824,
+     "ci95": [
+      0.778,
+      0.867
+     ]
+    },
+    "covert_tpr": {
+     "value": 1.0,
+     "ci95": [
+      1.0,
+      1.0
+     ]
+    },
+    "sanctioned_fpr": {
+     "value": 0.508,
+     "ci95": [
+      0.433,
+      0.579
+     ]
+    }
+   },
+   "_n_groups_found_pct": 100.0,
+   "_n_test_groups": 240
+  },
+  "covert_hijacks_declared_channel_0.25": {
+   "ringguard_unmodified": {
+    "auroc": {
+     "value": 0.666,
+     "ci95": [
+      0.6,
+      0.726
+     ]
+    },
+    "covert_tpr": {
+     "value": 0.608,
+     "ci95": [
+      0.525,
+      0.683
+     ]
+    },
+    "sanctioned_fpr": {
+     "value": 0.3,
+     "ci95": [
+      0.233,
+      0.375
+     ]
+    }
+   },
+   "event_volume_baseline": {
+    "auroc": {
+     "value": 0.4,
+     "ci95": [
+      0.357,
+      0.434
+     ]
+    },
+    "covert_tpr": {
+     "value": 0.025,
+     "ci95": [
+      0.0,
+      0.05
+     ]
+    },
+    "sanctioned_fpr": {
+     "value": 0.058,
+     "ci95": [
+      0.025,
+      0.092
+     ]
+    }
+   },
+   "any_shared_resource": {
+    "auroc": {
+     "value": 0.5,
+     "ci95": [
+      0.5,
+      0.5
+     ]
+    },
+    "covert_tpr": {
+     "value": 1.0,
+     "ci95": [
+      1.0,
+      1.0
+     ]
+    },
+    "sanctioned_fpr": {
+     "value": 1.0,
+     "ci95": [
+      1.0,
+      1.0
+     ]
+    }
+   },
+   "policy_only(unsanctioned_share)": {
+    "auroc": {
+     "value": 0.9,
+     "ci95": [
+      0.86,
+      0.933
+     ]
+    },
+    "covert_tpr": {
+     "value": 0.8,
+     "ci95": [
+      0.721,
+      0.867
+     ]
+    },
+    "sanctioned_fpr": {
+     "value": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ]
+    }
+   },
+   "swarm_logreg": {
+    "auroc": {
+     "value": 0.931,
+     "ci95": [
+      0.888,
+      0.961
+     ]
+    },
+    "covert_tpr": {
+     "value": 0.8,
+     "ci95": [
+      0.729,
+      0.858
+     ]
+    },
+    "sanctioned_fpr": {
+     "value": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ]
+    }
+   },
+   "_n_groups_found_pct": 100.0,
+   "_n_test_groups": 240
+  },
+  "covert_hijacks_declared_channel_0.5": {
+   "ringguard_unmodified": {
+    "auroc": {
+     "value": 0.666,
+     "ci95": [
+      0.6,
+      0.726
+     ]
+    },
+    "covert_tpr": {
+     "value": 0.608,
+     "ci95": [
+      0.525,
+      0.683
+     ]
+    },
+    "sanctioned_fpr": {
+     "value": 0.3,
+     "ci95": [
+      0.233,
+      0.375
+     ]
+    }
+   },
+   "event_volume_baseline": {
+    "auroc": {
+     "value": 0.4,
+     "ci95": [
+      0.357,
+      0.434
+     ]
+    },
+    "covert_tpr": {
+     "value": 0.025,
+     "ci95": [
+      0.0,
+      0.05
+     ]
+    },
+    "sanctioned_fpr": {
+     "value": 0.058,
+     "ci95": [
+      0.025,
+      0.092
+     ]
+    }
+   },
+   "any_shared_resource": {
+    "auroc": {
+     "value": 0.5,
+     "ci95": [
+      0.5,
+      0.5
+     ]
+    },
+    "covert_tpr": {
+     "value": 1.0,
+     "ci95": [
+      1.0,
+      1.0
+     ]
+    },
+    "sanctioned_fpr": {
+     "value": 1.0,
+     "ci95": [
+      1.0,
+      1.0
+     ]
+    }
+   },
+   "policy_only(unsanctioned_share)": {
+    "auroc": {
+     "value": 0.779,
+     "ci95": [
+      0.746,
+      0.817
+     ]
+    },
+    "covert_tpr": {
+     "value": 0.558,
+     "ci95": [
+      0.492,
+      0.633
+     ]
+    },
+    "sanctioned_fpr": {
+     "value": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ]
+    }
+   },
+   "swarm_logreg": {
+    "auroc": {
+     "value": 0.839,
+     "ci95": [
+      0.8,
+      0.887
+     ]
+    },
+    "covert_tpr": {
+     "value": 0.558,
+     "ci95": [
+      0.492,
+      0.638
+     ]
+    },
+    "sanctioned_fpr": {
+     "value": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ]
+    }
+   },
+   "_n_groups_found_pct": 100.0,
+   "_n_test_groups": 240
+  },
+  "keep_events_0.8": {
+   "ringguard_unmodified": {
+    "auroc": {
+     "value": 0.618,
+     "ci95": [
+      0.537,
+      0.689
+     ]
+    },
+    "covert_tpr": {
+     "value": 0.533,
+     "ci95": [
+      0.45,
+      0.613
+     ]
+    },
+    "sanctioned_fpr": {
+     "value": 0.275,
+     "ci95": [
+      0.217,
+      0.35
+     ]
+    }
+   },
+   "event_volume_baseline": {
+    "auroc": {
+     "value": 0.417,
+     "ci95": [
+      0.353,
+      0.484
+     ]
+    },
+    "covert_tpr": {
+     "value": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ]
+    },
+    "sanctioned_fpr": {
+     "value": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ]
+    }
+   },
+   "any_shared_resource": {
+    "auroc": {
+     "value": 0.5,
+     "ci95": [
+      0.5,
+      0.5
+     ]
+    },
+    "covert_tpr": {
+     "value": 1.0,
+     "ci95": [
+      1.0,
+      1.0
+     ]
+    },
+    "sanctioned_fpr": {
+     "value": 1.0,
+     "ci95": [
+      1.0,
+      1.0
+     ]
+    }
+   },
+   "policy_only(unsanctioned_share)": {
+    "auroc": {
+     "value": 1.0,
+     "ci95": [
+      1.0,
+      1.0
+     ]
+    },
+    "covert_tpr": {
+     "value": 1.0,
+     "ci95": [
+      1.0,
+      1.0
+     ]
+    },
+    "sanctioned_fpr": {
+     "value": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ]
+    }
+   },
+   "swarm_logreg": {
+    "auroc": {
+     "value": 1.0,
+     "ci95": [
+      1.0,
+      1.0
+     ]
+    },
+    "covert_tpr": {
+     "value": 1.0,
+     "ci95": [
+      1.0,
+      1.0
+     ]
+    },
+    "sanctioned_fpr": {
+     "value": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ]
+    }
+   },
+   "_n_groups_found_pct": 100.0,
+   "_n_test_groups": 240
+  },
+  "keep_events_0.5": {
+   "ringguard_unmodified": {
+    "auroc": {
+     "value": 0.563,
+     "ci95": [
+      0.495,
+      0.632
+     ]
+    },
+    "covert_tpr": {
+     "value": 0.258,
+     "ci95": [
+      0.2,
+      0.333
+     ]
+    },
+    "sanctioned_fpr": {
+     "value": 0.167,
+     "ci95": [
+      0.108,
+      0.217
+     ]
+    }
+   },
+   "event_volume_baseline": {
+    "auroc": {
+     "value": 0.477,
+     "ci95": [
+      0.434,
+      0.533
+     ]
+    },
+    "covert_tpr": {
+     "value": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ]
+    },
+    "sanctioned_fpr": {
+     "value": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ]
+    }
+   },
+   "any_shared_resource": {
+    "auroc": {
+     "value": 0.5,
+     "ci95": [
+      0.5,
+      0.5
+     ]
+    },
+    "covert_tpr": {
+     "value": 1.0,
+     "ci95": [
+      1.0,
+      1.0
+     ]
+    },
+    "sanctioned_fpr": {
+     "value": 1.0,
+     "ci95": [
+      1.0,
+      1.0
+     ]
+    }
+   },
+   "policy_only(unsanctioned_share)": {
+    "auroc": {
+     "value": 1.0,
+     "ci95": [
+      1.0,
+      1.0
+     ]
+    },
+    "covert_tpr": {
+     "value": 1.0,
+     "ci95": [
+      1.0,
+      1.0
+     ]
+    },
+    "sanctioned_fpr": {
+     "value": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ]
+    }
+   },
+   "swarm_logreg": {
+    "auroc": {
+     "value": 1.0,
+     "ci95": [
+      1.0,
+      1.0
+     ]
+    },
+    "covert_tpr": {
+     "value": 1.0,
+     "ci95": [
+      1.0,
+      1.0
+     ]
+    },
+    "sanctioned_fpr": {
+     "value": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ]
+    }
+   },
+   "_n_groups_found_pct": 100.0,
+   "_n_test_groups": 240
+  },
+  "keep_events_0.2": {
+   "ringguard_unmodified": {
+    "auroc": {
+     "value": 0.495,
+     "ci95": [
+      0.417,
+      0.562
+     ]
+    },
+    "covert_tpr": {
+     "value": 0.008,
+     "ci95": [
+      0.0,
+      0.025
+     ]
+    },
+    "sanctioned_fpr": {
+     "value": 0.033,
+     "ci95": [
+      0.008,
+      0.067
+     ]
+    }
+   },
+   "event_volume_baseline": {
+    "auroc": {
+     "value": 0.526,
+     "ci95": [
+      0.45,
+      0.59
+     ]
+    },
+    "covert_tpr": {
+     "value": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ]
+    },
+    "sanctioned_fpr": {
+     "value": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ]
+    }
+   },
+   "any_shared_resource": {
+    "auroc": {
+     "value": 0.5,
+     "ci95": [
+      0.458,
+      0.542
+     ]
+    },
+    "covert_tpr": {
+     "value": 0.883,
+     "ci95": [
+      0.825,
+      0.942
+     ]
+    },
+    "sanctioned_fpr": {
+     "value": 0.883,
+     "ci95": [
+      0.808,
+      0.942
+     ]
+    }
+   },
+   "policy_only(unsanctioned_share)": {
+    "auroc": {
+     "value": 0.912,
+     "ci95": [
+      0.879,
+      0.944
+     ]
+    },
+    "covert_tpr": {
+     "value": 0.817,
+     "ci95": [
+      0.742,
+      0.883
+     ]
+    },
+    "sanctioned_fpr": {
+     "value": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ]
+    }
+   },
+   "swarm_logreg": {
+    "auroc": {
+     "value": 0.889,
+     "ci95": [
+      0.817,
+      0.941
+     ]
+    },
+    "covert_tpr": {
+     "value": 0.833,
+     "ci95": [
+      0.758,
+      0.888
+     ]
+    },
+    "sanctioned_fpr": {
+     "value": 0.017,
+     "ci95": [
+      0.0,
+      0.046
+     ]
+    }
+   },
+   "_n_groups_found_pct": 88.3,
+   "_n_test_groups": 240
+  },
+  "tamper_agents_0.07": {
+   "ringguard_unmodified": {
+    "auroc": {
+     "value": 0.655,
+     "ci95": [
+      0.607,
+      0.714
+     ]
+    },
+    "covert_tpr": {
+     "value": 0.458,
+     "ci95": [
+      0.392,
+      0.517
+     ]
+    },
+    "sanctioned_fpr": {
+     "value": 0.233,
+     "ci95": [
+      0.162,
+      0.3
+     ]
+    }
+   },
+   "event_volume_baseline": {
+    "auroc": {
+     "value": 0.502,
+     "ci95": [
+      0.435,
+      0.577
+     ]
+    },
+    "covert_tpr": {
+     "value": 0.017,
+     "ci95": [
+      0.0,
+      0.042
+     ]
+    },
+    "sanctioned_fpr": {
+     "value": 0.033,
+     "ci95": [
+      0.008,
+      0.067
+     ]
+    }
+   },
+   "any_shared_resource": {
+    "auroc": {
+     "value": 0.5,
+     "ci95": [
+      0.5,
+      0.5
+     ]
+    },
+    "covert_tpr": {
+     "value": 1.0,
+     "ci95": [
+      1.0,
+      1.0
+     ]
+    },
+    "sanctioned_fpr": {
+     "value": 1.0,
+     "ci95": [
+      1.0,
+      1.0
+     ]
+    }
+   },
+   "policy_only(unsanctioned_share)": {
+    "auroc": {
+     "value": 1.0,
+     "ci95": [
+      1.0,
+      1.0
+     ]
+    },
+    "covert_tpr": {
+     "value": 1.0,
+     "ci95": [
+      1.0,
+      1.0
+     ]
+    },
+    "sanctioned_fpr": {
+     "value": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ]
+    }
+   },
+   "swarm_logreg": {
+    "auroc": {
+     "value": 1.0,
+     "ci95": [
+      1.0,
+      1.0
+     ]
+    },
+    "covert_tpr": {
+     "value": 1.0,
+     "ci95": [
+      1.0,
+      1.0
+     ]
+    },
+    "sanctioned_fpr": {
+     "value": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ]
+    }
+   },
+   "_n_groups_found_pct": 100.0,
+   "_n_test_groups": 240
+  },
+  "tamper_agents_0.2": {
+   "ringguard_unmodified": {
+    "auroc": {
+     "value": 0.604,
+     "ci95": [
+      0.546,
+      0.666
+     ]
+    },
+    "covert_tpr": {
+     "value": 0.267,
+     "ci95": [
+      0.2,
+      0.333
+     ]
+    },
+    "sanctioned_fpr": {
+     "value": 0.183,
+     "ci95": [
+      0.117,
+      0.25
+     ]
+    }
+   },
+   "event_volume_baseline": {
+    "auroc": {
+     "value": 0.499,
+     "ci95": [
+      0.419,
+      0.57
+     ]
+    },
+    "covert_tpr": {
+     "value": 0.008,
+     "ci95": [
+      0.0,
+      0.025
+     ]
+    },
+    "sanctioned_fpr": {
+     "value": 0.025,
+     "ci95": [
+      0.0,
+      0.058
+     ]
+    }
+   },
+   "any_shared_resource": {
+    "auroc": {
+     "value": 0.504,
+     "ci95": [
+      0.5,
+      0.512
+     ]
+    },
+    "covert_tpr": {
+     "value": 1.0,
+     "ci95": [
+      1.0,
+      1.0
+     ]
+    },
+    "sanctioned_fpr": {
+     "value": 0.992,
+     "ci95": [
+      0.975,
+      1.0
+     ]
+    }
+   },
+   "policy_only(unsanctioned_share)": {
+    "auroc": {
+     "value": 0.996,
+     "ci95": [
+      0.988,
+      1.0
+     ]
+    },
+    "covert_tpr": {
+     "value": 0.983,
+     "ci95": [
+      0.958,
+      1.0
+     ]
+    },
+    "sanctioned_fpr": {
+     "value": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ]
+    }
+   },
+   "swarm_logreg": {
+    "auroc": {
+     "value": 1.0,
+     "ci95": [
+      1.0,
+      1.0
+     ]
+    },
+    "covert_tpr": {
+     "value": 0.992,
+     "ci95": [
+      0.975,
+      1.0
+     ]
+    },
+    "sanctioned_fpr": {
+     "value": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ]
+    }
+   },
+   "_n_groups_found_pct": 99.6,
+   "_n_test_groups": 240
+  },
+  "rename_3_names": {
+   "ringguard_unmodified": {
+    "auroc": {
+     "value": 0.665,
+     "ci95": [
+      0.594,
+      0.73
+     ]
+    },
+    "covert_tpr": {
+     "value": 0.017,
+     "ci95": [
+      0.0,
+      0.038
+     ]
+    },
+    "sanctioned_fpr": {
+     "value": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ]
+    }
+   },
+   "event_volume_baseline": {
+    "auroc": {
+     "value": 0.435,
+     "ci95": [
+      0.381,
+      0.487
+     ]
+    },
+    "covert_tpr": {
+     "value": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ]
+    },
+    "sanctioned_fpr": {
+     "value": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ]
+    }
+   },
+   "any_shared_resource": {
+    "auroc": {
+     "value": 0.5,
+     "ci95": [
+      0.5,
+      0.5
+     ]
+    },
+    "covert_tpr": {
+     "value": 1.0,
+     "ci95": [
+      1.0,
+      1.0
+     ]
+    },
+    "sanctioned_fpr": {
+     "value": 1.0,
+     "ci95": [
+      1.0,
+      1.0
+     ]
+    }
+   },
+   "policy_only(unsanctioned_share)": {
+    "auroc": {
+     "value": 1.0,
+     "ci95": [
+      1.0,
+      1.0
+     ]
+    },
+    "covert_tpr": {
+     "value": 1.0,
+     "ci95": [
+      1.0,
+      1.0
+     ]
+    },
+    "sanctioned_fpr": {
+     "value": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ]
+    }
+   },
+   "swarm_logreg": {
+    "auroc": {
+     "value": 1.0,
+     "ci95": [
+      1.0,
+      1.0
+     ]
+    },
+    "covert_tpr": {
+     "value": 1.0,
+     "ci95": [
+      1.0,
+      1.0
+     ]
+    },
+    "sanctioned_fpr": {
+     "value": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ]
+    }
+   },
+   "_n_groups_found_pct": 100.0,
+   "_n_test_groups": 240
+  },
+  "rename_6.6_names": {
+   "ringguard_unmodified": {
+    "auroc": {
+     "value": 0.65,
+     "ci95": [
+      0.585,
+      0.713
+     ]
+    },
+    "covert_tpr": {
+     "value": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ]
+    },
+    "sanctioned_fpr": {
+     "value": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ]
+    }
+   },
+   "event_volume_baseline": {
+    "auroc": {
+     "value": 0.451,
+     "ci95": [
+      0.384,
+      0.53
+     ]
+    },
+    "covert_tpr": {
+     "value": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ]
+    },
+    "sanctioned_fpr": {
+     "value": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ]
+    }
+   },
+   "any_shared_resource": {
+    "auroc": {
+     "value": 0.5,
+     "ci95": [
+      0.5,
+      0.5
+     ]
+    },
+    "covert_tpr": {
+     "value": 1.0,
+     "ci95": [
+      1.0,
+      1.0
+     ]
+    },
+    "sanctioned_fpr": {
+     "value": 1.0,
+     "ci95": [
+      1.0,
+      1.0
+     ]
+    }
+   },
+   "policy_only(unsanctioned_share)": {
+    "auroc": {
+     "value": 1.0,
+     "ci95": [
+      1.0,
+      1.0
+     ]
+    },
+    "covert_tpr": {
+     "value": 1.0,
+     "ci95": [
+      1.0,
+      1.0
+     ]
+    },
+    "sanctioned_fpr": {
+     "value": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ]
+    }
+   },
+   "swarm_logreg": {
+    "auroc": {
+     "value": 1.0,
+     "ci95": [
+      1.0,
+      1.0
+     ]
+    },
+    "covert_tpr": {
+     "value": 1.0,
+     "ci95": [
+      1.0,
+      1.0
+     ]
+    },
+    "sanctioned_fpr": {
+     "value": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ]
+    }
+   },
+   "_n_groups_found_pct": 100.0,
+   "_n_test_groups": 240
+  },
+  "rename_6.6_names_fingerprint_coverage_0.05": {
+   "ringguard_unmodified": {
+    "auroc": {
+     "value": 0.649,
+     "ci95": [
+      0.583,
+      0.712
+     ]
+    },
+    "covert_tpr": {
+     "value": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ]
+    },
+    "sanctioned_fpr": {
+     "value": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ]
+    }
+   },
+   "event_volume_baseline": {
+    "auroc": {
+     "value": 0.457,
+     "ci95": [
+      0.393,
+      0.521
+     ]
+    },
+    "covert_tpr": {
+     "value": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ]
+    },
+    "sanctioned_fpr": {
+     "value": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ]
+    }
+   },
+   "any_shared_resource": {
+    "auroc": {
+     "value": 0.5,
+     "ci95": [
+      0.5,
+      0.5
+     ]
+    },
+    "covert_tpr": {
+     "value": 1.0,
+     "ci95": [
+      1.0,
+      1.0
+     ]
+    },
+    "sanctioned_fpr": {
+     "value": 1.0,
+     "ci95": [
+      1.0,
+      1.0
+     ]
+    }
+   },
+   "policy_only(unsanctioned_share)": {
+    "auroc": {
+     "value": 1.0,
+     "ci95": [
+      1.0,
+      1.0
+     ]
+    },
+    "covert_tpr": {
+     "value": 1.0,
+     "ci95": [
+      1.0,
+      1.0
+     ]
+    },
+    "sanctioned_fpr": {
+     "value": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ]
+    }
+   },
+   "swarm_logreg": {
+    "auroc": {
+     "value": 1.0,
+     "ci95": [
+      1.0,
+      1.0
+     ]
+    },
+    "covert_tpr": {
+     "value": 1.0,
+     "ci95": [
+      1.0,
+      1.0
+     ]
+    },
+    "sanctioned_fpr": {
+     "value": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ]
+    }
+   },
+   "_n_groups_found_pct": 100.0,
+   "_n_test_groups": 240
+  },
+  "rename_6.6_names_fingerprint_coverage_0.2": {
+   "ringguard_unmodified": {
+    "auroc": {
+     "value": 0.643,
+     "ci95": [
+      0.573,
+      0.709
+     ]
+    },
+    "covert_tpr": {
+     "value": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ]
+    },
+    "sanctioned_fpr": {
+     "value": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ]
+    }
+   },
+   "event_volume_baseline": {
+    "auroc": {
+     "value": 0.465,
+     "ci95": [
+      0.4,
+      0.528
+     ]
+    },
+    "covert_tpr": {
+     "value": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ]
+    },
+    "sanctioned_fpr": {
+     "value": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ]
+    }
+   },
+   "any_shared_resource": {
+    "auroc": {
+     "value": 0.5,
+     "ci95": [
+      0.5,
+      0.5
+     ]
+    },
+    "covert_tpr": {
+     "value": 1.0,
+     "ci95": [
+      1.0,
+      1.0
+     ]
+    },
+    "sanctioned_fpr": {
+     "value": 1.0,
+     "ci95": [
+      1.0,
+      1.0
+     ]
+    }
+   },
+   "policy_only(unsanctioned_share)": {
+    "auroc": {
+     "value": 1.0,
+     "ci95": [
+      1.0,
+      1.0
+     ]
+    },
+    "covert_tpr": {
+     "value": 1.0,
+     "ci95": [
+      1.0,
+      1.0
+     ]
+    },
+    "sanctioned_fpr": {
+     "value": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ]
+    }
+   },
+   "swarm_logreg": {
+    "auroc": {
+     "value": 1.0,
+     "ci95": [
+      1.0,
+      1.0
+     ]
+    },
+    "covert_tpr": {
+     "value": 1.0,
+     "ci95": [
+      1.0,
+      1.0
+     ]
+    },
+    "sanctioned_fpr": {
+     "value": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ]
+    }
+   },
+   "_n_groups_found_pct": 100.0,
+   "_n_test_groups": 240
+  },
+  "rename_6.6_names_fingerprint_coverage_0.5": {
+   "ringguard_unmodified": {
+    "auroc": {
+     "value": 0.637,
+     "ci95": [
+      0.562,
+      0.702
+     ]
+    },
+    "covert_tpr": {
+     "value": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ]
+    },
+    "sanctioned_fpr": {
+     "value": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ]
+    }
+   },
+   "event_volume_baseline": {
+    "auroc": {
+     "value": 0.472,
+     "ci95": [
+      0.417,
+      0.536
+     ]
+    },
+    "covert_tpr": {
+     "value": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ]
+    },
+    "sanctioned_fpr": {
+     "value": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ]
+    }
+   },
+   "any_shared_resource": {
+    "auroc": {
+     "value": 0.5,
+     "ci95": [
+      0.5,
+      0.5
+     ]
+    },
+    "covert_tpr": {
+     "value": 1.0,
+     "ci95": [
+      1.0,
+      1.0
+     ]
+    },
+    "sanctioned_fpr": {
+     "value": 1.0,
+     "ci95": [
+      1.0,
+      1.0
+     ]
+    }
+   },
+   "policy_only(unsanctioned_share)": {
+    "auroc": {
+     "value": 1.0,
+     "ci95": [
+      1.0,
+      1.0
+     ]
+    },
+    "covert_tpr": {
+     "value": 1.0,
+     "ci95": [
+      1.0,
+      1.0
+     ]
+    },
+    "sanctioned_fpr": {
+     "value": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ]
+    }
+   },
+   "swarm_logreg": {
+    "auroc": {
+     "value": 1.0,
+     "ci95": [
+      1.0,
+      1.0
+     ]
+    },
+    "covert_tpr": {
+     "value": 1.0,
+     "ci95": [
+      1.0,
+      1.0
+     ]
+    },
+    "sanctioned_fpr": {
+     "value": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ]
+    }
+   },
+   "_n_groups_found_pct": 100.0,
+   "_n_test_groups": 240
+  },
+  "rename_6.6_names_fingerprint_coverage_1.0": {
+   "ringguard_unmodified": {
+    "auroc": {
+     "value": 0.604,
+     "ci95": [
+      0.546,
+      0.657
+     ]
+    },
+    "covert_tpr": {
+     "value": 0.075,
+     "ci95": [
+      0.025,
+      0.117
+     ]
+    },
+    "sanctioned_fpr": {
+     "value": 0.025,
+     "ci95": [
+      0.0,
+      0.05
+     ]
+    }
+   },
+   "event_volume_baseline": {
+    "auroc": {
+     "value": 0.461,
+     "ci95": [
+      0.415,
+      0.508
+     ]
+    },
+    "covert_tpr": {
+     "value": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ]
+    },
+    "sanctioned_fpr": {
+     "value": 0.008,
+     "ci95": [
+      0.0,
+      0.025
+     ]
+    }
+   },
+   "any_shared_resource": {
+    "auroc": {
+     "value": 0.5,
+     "ci95": [
+      0.5,
+      0.5
+     ]
+    },
+    "covert_tpr": {
+     "value": 1.0,
+     "ci95": [
+      1.0,
+      1.0
+     ]
+    },
+    "sanctioned_fpr": {
+     "value": 1.0,
+     "ci95": [
+      1.0,
+      1.0
+     ]
+    }
+   },
+   "policy_only(unsanctioned_share)": {
+    "auroc": {
+     "value": 1.0,
+     "ci95": [
+      1.0,
+      1.0
+     ]
+    },
+    "covert_tpr": {
+     "value": 1.0,
+     "ci95": [
+      1.0,
+      1.0
+     ]
+    },
+    "sanctioned_fpr": {
+     "value": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ]
+    }
+   },
+   "swarm_logreg": {
+    "auroc": {
+     "value": 1.0,
+     "ci95": [
+      1.0,
+      1.0
+     ]
+    },
+    "covert_tpr": {
+     "value": 1.0,
+     "ci95": [
+      1.0,
+      1.0
+     ]
+    },
+    "sanctioned_fpr": {
+     "value": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ]
+    }
+   },
+   "_n_groups_found_pct": 100.0,
+   "_n_test_groups": 240
+  }
+ }
+}
