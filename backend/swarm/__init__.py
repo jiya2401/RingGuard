@@ -1,0 +1,1 @@
+"""Swarm-alignment extension of RingGuard (built during the Swarm Alignment Hackathon, Nov 6-8, 2026).""" 
